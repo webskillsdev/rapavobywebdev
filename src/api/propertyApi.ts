@@ -851,16 +851,16 @@ export const propertyApi = api.injectEndpoints({
 
           let saved = false;
 
-          if (currentUser) {
-            const { data: favorite } = await supabase
-              .from("favorite_properties")
-              .select("id")
-              .eq("property_id", propertyId)
-              .eq("user_id", currentUser?.uid)
-              .maybeSingle();
+    if (currentUser) {
+    const { data: favorite } = await supabase
+    .from("saved_properties")
+    .select("id")
+    .eq("property_id", propertyId)
+    .eq("user_id", currentUser?.uid)
+    .maybeSingle();
 
-            saved = !!favorite;
-          }
+  saved = !!favorite;
+}
 
           if (error) {
             return {
@@ -892,6 +892,58 @@ export const propertyApi = api.injectEndpoints({
 
       providesTags: ["Properties"],
     }),
+
+    getPublicProperty: builder.query({
+  async queryFn(propertyId) {
+    try {
+      const { data, error } = await supabase
+        .from("properties")
+        .select(
+          `
+          id,
+          title,
+          description,
+          price,
+          location,
+          property_type,
+          listing_type,
+          bedrooms,
+          bathrooms,
+          sqm,
+          property_media(media_url, is_cover)
+        `,
+        )
+        .eq("id", propertyId)
+        .single();
+
+      if (error) {
+        return {
+          error: {
+            success: false,
+            message: error.message,
+          },
+        };
+      }
+
+      return {
+        data: {
+          success: true,
+          data,
+        },
+      };
+    } catch (err: any) {
+      return {
+        error: {
+          success: false,
+          message: err.message,
+        },
+      };
+    }
+  },
+
+  providesTags: ["Properties"],
+}),
+
     getSavedProperties: builder.query({
       async queryFn(_, api) {
         try {
@@ -1036,10 +1088,8 @@ export const propertyApi = api.injectEndpoints({
     }),
 
     getUserProperties: builder.query({
-      async queryFn({ user_id }, api) {
+      async queryFn({ user_id }) {
         try {
-          const state = api.getState() as any;
-
           if (!user_id) {
             return {
               error: {
@@ -1093,12 +1143,9 @@ export const propertyApi = api.injectEndpoints({
     }),
 
     getPropertiesByDashboardCategory: builder.query({
-      async queryFn({ category, limit = 10, latitude, longitude }, api) {
-        try {
-          const state = api.getState() as any;
-          const currentUser = state.auth.user;
-
-          let query = supabase
+  async queryFn({ category, limit = 10, latitude, longitude }) {
+    try {
+      let query = supabase
             .from("feed_view")
             .select("*")
             .eq("item_type", "property")
@@ -1336,8 +1383,8 @@ export const propertyApi = api.injectEndpoints({
     >({
       async queryFn(_, api) {
         try {
-          const state = api.getState() as any;
-          const currentUser = state.auth.user;
+      const state = api.getState() as any;
+      const currentUser = state.auth.user;
 
           if (!currentUser) {
             return { error: { success: false, message: "Unauthorized" } };
@@ -1497,6 +1544,7 @@ export const {
   useDeletePropertyMutation,
   useToggleSavedPropertyMutation,
   useGetPropertiesQuery,
+  useGetPublicPropertyQuery,
   useGetSinglePropertyQuery,
   useLazyGetSinglePropertyQuery,
   useGetSavedPropertiesQuery,

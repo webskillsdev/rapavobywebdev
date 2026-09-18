@@ -1,14 +1,9 @@
-// import storage from "@react-native-firebase/storage";
-
-import { PropertyCreationErrorCode } from "@/utils/type";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as ImageManipulator from "expo-image-manipulator";
 import { CLOUDINARY_CONFIG } from "../lib/config";
+import type { PropertyCreationErrorCode } from "../utils/type";
 
 export interface MediaItem {
-  uri: string;
+  file: File;
   type: "photo" | "video";
-  thumbnailUrl?: string;
 }
 
 export interface UploadedMedia {
@@ -18,22 +13,98 @@ export interface UploadedMedia {
   thumbnailUrl?: string;
 }
 
-// Upload a single file to Cloudinary
+export interface PropertyCreationError {
+  success: false;
+  code: PropertyCreationErrorCode;
+  title: string;
+  message: string;
+}
+
+const MAX_IMAGE_SIZE_MB = 10;
+const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+
+export const validateMediaItems = async (
+  mediaItems: MediaItem[],
+): Promise<void> => {
+  if (!mediaItems?.length) {
+    throw {
+      success: false,
+      code: "NO_MEDIA",
+      title: "No images selected",
+      message:
+        "Please select at least one property image before creating your listing.",
+    };
+  }
+
+  mediaItems.forEach((item, i) => {
+    if (item.type !== "photo") return;
+
+    if (item.file.size > MAX_IMAGE_SIZE_BYTES) {
+      const actualSizeMB = (item.file.size / (1024 * 1024)).toFixed(1);
+
+      throw {
+        success: false,
+        code: "IMAGE_TOO_LARGE",
+        title: "Image upload failed",
+        message: `Image ${i + 1} is ${actualSizeMB}MB. The maximum allowed image size is ${MAX_IMAGE_SIZE_MB}MB. Please replace it and try again.`,
+      };
+    }
+  });
+};
+
+export const optimizeImageForUpload = (
+  file: File,
+  isCover = false,
+): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const maxWidth = isCover ? 1200 : 900;
+      const scale = Math.min(1, maxWidth / img.width);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(objectUrl);
+
+          if (!blob) {
+            reject(new Error("Image compression failed"));
+            return;
+          }
+
+          resolve(new File([blob], file.name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        isCover ? 0.75 : 0.65,
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Could not load image for compression"));
+    };
+
+    img.src = objectUrl;
+  });
+};
+
 export const uploadSingleMedia = async (
-  uri: string,
+  file: File,
   listingId: string,
   mediaType: "photo" | "video",
   index: number,
   onProgress?: (progress: number) => void,
 ): Promise<UploadedMedia> => {
   const formData = new FormData();
-
-  formData.append("file", {
-    uri,
-    type: mediaType === "photo" ? "image/jpeg" : "video/mp4",
-    name: `${listingId}_${index}.${mediaType === "photo" ? "jpg" : "mp4"}`,
-  } as any);
-
+  formData.append("file", file);
   formData.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
   formData.append("public_id", `listings/${listingId}/${mediaType}_${index}`);
 
@@ -48,8 +119,7 @@ export const uploadSingleMedia = async (
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable && onProgress) {
-        const progress = event.loaded / event.total;
-        onProgress(progress);
+        onProgress(event.loaded / event.total);
       }
     };
 
@@ -76,90 +146,6 @@ export const uploadSingleMedia = async (
   });
 };
 
-import { File } from "expo-file-system";
-
-const MAX_IMAGE_SIZE_MB = 10;
-const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
-
-export const validateMediaItems = async (
-  mediaItems: MediaItem[],
-): Promise<void> => {
-  if (!mediaItems?.length) {
-    throw {
-      success: false,
-      code: "NO_MEDIA",
-      title: "No images selected",
-      message:
-        "Please select at least one property image before creating your listing.",
-    };
-  }
-
-  for (let i = 0; i < mediaItems.length; i++) {
-    const item = mediaItems[i];
-
-    if (item.type !== "photo") continue;
-
-    try {
-      const file = new File(item.uri);
-
-      if (!file.exists) {
-        throw {
-          success: false,
-          code: "IMAGE_NOT_FOUND",
-          title: "Image not found",
-          message: `Image ${i + 1} could not be found. Please remove it and select the image again.`,
-        };
-      }
-
-      const fileSize = file.size;
-
-      if (fileSize > MAX_IMAGE_SIZE_BYTES) {
-        const actualSizeMB = (fileSize / (1024 * 1024)).toFixed(1);
-
-        throw {
-          success: false,
-          code: "IMAGE_TOO_LARGE",
-          title: "Image upload failed",
-          message: `Image ${i + 1} is ${actualSizeMB}MB. The maximum allowed image size is ${MAX_IMAGE_SIZE_MB}MB. Your property information has been saved. Please replace the image and try again.`,
-        };
-      }
-    } catch (error: any) {
-      // Preserve our own validation errors
-      if (
-        error?.code === "IMAGE_NOT_FOUND" ||
-        error?.code === "IMAGE_TOO_LARGE"
-      ) {
-        throw error;
-      }
-
-      throw {
-        success: false,
-        code: "IMAGE_VALIDATION_ERROR",
-        title: "Unable to check image",
-        message: `We couldn't verify image ${i + 1}. Please remove it and select the image again.`,
-      };
-    }
-  }
-};
-
-// Upload multiple media files with combined progress tracking
-export const uploadMedia = async (
-  // Keep old signature for backwards compat
-  uri: string,
-  listingId: string,
-  mediaType: "photo" | "video",
-  onProgress?: (progress: number) => void,
-): Promise<string> => {
-  const result = await uploadSingleMedia(
-    uri,
-    listingId,
-    mediaType,
-    0,
-    onProgress,
-  );
-  return result.url;
-};
-
 export const uploadMultipleMedia = async (
   mediaItems: MediaItem[],
   listingId: string,
@@ -173,31 +159,23 @@ export const uploadMultipleMedia = async (
 
     const updateTotalProgress = (fileIndex: number, fileProgress: number) => {
       fileProgresses[fileIndex] = fileProgress;
-
       const totalProgress =
-        fileProgresses.reduce((sum, progress) => sum + progress, 0) / total;
-
+        fileProgresses.reduce((sum, p) => sum + p, 0) / total;
       onProgress?.(totalProgress, fileIndex);
     };
 
-    const optimizedUris = await Promise.all(
-      mediaItems.map(async (item, i) => {
-        if (item.type === "photo") {
-          return optimizeImageForUpload(item.uri, i === 0);
-        }
-
-        return item.uri;
-      }),
+    const optimizedFiles = await Promise.all(
+      mediaItems.map((item, i) =>
+        item.type === "photo"
+          ? optimizeImageForUpload(item.file, i === 0)
+          : Promise.resolve(item.file),
+      ),
     );
 
     const uploadedResults = await Promise.all(
       mediaItems.map((item, i) =>
-        uploadSingleMedia(
-          optimizedUris[i],
-          listingId,
-          item.type,
-          i,
-          (fileProgress) => updateTotalProgress(i, fileProgress),
+        uploadSingleMedia(optimizedFiles[i], listingId, item.type, i, (p) =>
+          updateTotalProgress(i, p),
         ),
       ),
     );
@@ -218,27 +196,13 @@ export const uploadMultipleMedia = async (
             )
           : undefined;
 
-      return {
-        ...uploaded,
-        url: optimizedUrl,
-        thumbnailUrl,
-      };
+      return { ...uploaded, url: optimizedUrl, thumbnailUrl };
     });
   } catch (error: any) {
-    // Preserve our intentional validation errors
-    if (error?.code === "IMAGE_TOO_LARGE") {
+    if (error?.code === "IMAGE_TOO_LARGE" || error?.code === "NO_MEDIA") {
       throw error;
     }
 
-    if (error?.code === "IMAGE_NOT_FOUND") {
-      throw error;
-    }
-
-    if (error?.code === "NO_MEDIA") {
-      throw error;
-    }
-
-    // Network errors
     if (
       error?.message?.toLowerCase().includes("network") ||
       error?.message?.toLowerCase().includes("fetch") ||
@@ -249,42 +213,32 @@ export const uploadMultipleMedia = async (
         code: "NETWORK_ERROR",
         title: "Property not created",
         message:
-          "We couldn't upload your property images. Your property information has been saved, so you won't need to fill out the form again. Please check your internet connection and try again.",
+          "We couldn't upload your property images. Please check your internet connection and try again.",
       } satisfies PropertyCreationError;
     }
 
-    // Cloudinary/upload errors
     throw {
       success: false,
       code: "CLOUDINARY_ERROR",
       title: "Property not created",
       message:
-        "We couldn't finish uploading your property images. Your property information is safe. Please try uploading the images again.",
+        "We couldn't finish uploading your property images. Please try again.",
     } satisfies PropertyCreationError;
   }
 };
 
 export const uploadProfileImage = async (
-  uri: string,
+  file: File,
   uid: string,
 ): Promise<string> => {
   const data = new FormData();
-
-  data.append("file", {
-    uri,
-    type: "image/jpeg",
-    name: `profile_${uid}.jpg`,
-  } as any);
-
-  data.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset); // from Cloudinary
-  data.append("folder", "profile_images");
+  data.append("file", file);
+  data.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
+  data.append("public_id", `profile_images/${uid}`);
 
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
-    {
-      method: "POST",
-      body: data,
-    },
+    { method: "POST", body: data },
   );
 
   const result = await res.json();
@@ -296,24 +250,6 @@ export const uploadProfileImage = async (
   return result.secure_url;
 };
 
-export const optimizeImageForUpload = async (uri: string, isCover = false) => {
-  const result = await ImageManipulator.manipulateAsync(
-    uri,
-    [{ resize: { width: isCover ? 1200 : 900 } }], // cover slightly higher res
-    {
-      compress: isCover ? 0.75 : 0.65, // additional images can be more compressed
-      format: ImageManipulator.SaveFormat.JPEG,
-    },
-  );
-  return result.uri;
-};
-
-export interface PropertyCreationError {
-  success: false;
-  code: PropertyCreationErrorCode;
-  title: string;
-  message: string;
-}
 const PROPERTY_DRAFT_KEY = "propertyCreationDraft";
 
 export interface PropertyDraft {
@@ -322,21 +258,18 @@ export interface PropertyDraft {
   coverId: string | null;
 }
 
-export const savePropertyDraft = async (draft: PropertyDraft) => {
+export const savePropertyDraft = (draft: PropertyDraft) => {
   try {
-    await AsyncStorage.setItem(PROPERTY_DRAFT_KEY, JSON.stringify(draft));
+    localStorage.setItem(PROPERTY_DRAFT_KEY, JSON.stringify(draft));
   } catch (error) {
     console.error("Failed to save property draft:", error);
   }
 };
 
-export const getPropertyDraft = async (): Promise<PropertyDraft | null> => {
+export const getPropertyDraft = (): PropertyDraft | null => {
   try {
-    // await AsyncStorage.clear()
-    const draft = await AsyncStorage.getItem(PROPERTY_DRAFT_KEY);
-
+    const draft = localStorage.getItem(PROPERTY_DRAFT_KEY);
     if (!draft) return null;
-
     return JSON.parse(draft);
   } catch (error) {
     console.error("Failed to load property draft:", error);
@@ -344,9 +277,9 @@ export const getPropertyDraft = async (): Promise<PropertyDraft | null> => {
   }
 };
 
-export const clearPropertyDraft = async () => {
+export const clearPropertyDraft = () => {
   try {
-    await AsyncStorage.removeItem(PROPERTY_DRAFT_KEY);
+    localStorage.removeItem(PROPERTY_DRAFT_KEY);
   } catch (error) {
     console.error("Failed to clear property draft:", error);
   }

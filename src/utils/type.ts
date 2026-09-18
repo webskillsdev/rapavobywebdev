@@ -441,6 +441,7 @@ export type MatchingProperty = {
 };
 
 export type PropertyCreationErrorCode =
+  | "UNAUTHORIZED"
   | "NO_MEDIA"
   | "IMAGE_NOT_FOUND"
   | "IMAGE_TOO_LARGE"

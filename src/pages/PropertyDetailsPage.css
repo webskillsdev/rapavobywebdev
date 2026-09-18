@@ -1,0 +1,17 @@
+.details-price {
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.details-description {
+  text-align: justify;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.details-media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

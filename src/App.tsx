@@ -4,6 +4,10 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import "./App.css";
 import { supabase } from "./lib/supabase";
+import { Routes, Route } from "react-router-dom";
+import ListingPage from "./pages/ListingPage";
+import PropertyDetailsPage from "./pages/PropertyDetailsPage";
+import PublicPropertyPage from "./pages/PublicPropertyPage";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -44,6 +48,11 @@ function App() {
         </button>
       </section>
 
+      <Routes>
+  <Route path="/" element={<ListingPage />} />
+  <Route path="/property/:id" element={<PropertyDetailsPage />} />
+  <Route path="/share/:id" element={<PublicPropertyPage />} />
+</Routes>
       <div className="ticks"></div>
 
       <section id="next-steps">
