@@ -51,7 +51,7 @@ export default function FeedPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 flex gap-6">
-      <div className="max-w-2xl flex-1">
+      <div className="max-w-2xl flex-1 min-w-0">
       <h1 className="text-2xl font-bold text-gray-900 mb-4">Feed</h1>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6">

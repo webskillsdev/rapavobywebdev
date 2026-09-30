@@ -147,7 +147,7 @@ export default function MyListingsPage() {
               <img
                 src={property.cover_url ?? "/placeholder-property.jpg"}
                 alt={property.title}
-                className="h-24 w-32 rounded-lg object-cover flex-shrink-0"
+                className="h-20 w-24 sm:h-24 sm:w-32 rounded-lg object-cover flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
@@ -163,7 +163,7 @@ export default function MyListingsPage() {
                   ₦{Number(property.price ?? 0).toLocaleString()}
                   {property.listing_type === "rent" && <span className="text-xs text-gray-400"> /year</span>}
                 </p>
-                <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-2">
                   {property.property_type !== "land" && (
                     <span>{property.bedrooms ?? 0} Beds · {property.bathrooms ?? 0} Baths · {property.sqm ?? 0} SQM</span>
                   )}
@@ -173,7 +173,7 @@ export default function MyListingsPage() {
                     Listed {property.created_at ? new Date(property.created_at).toLocaleDateString() : ""}
                   </span>
                 </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-3">
                                    <Link
                     to={`/my-listings/${property.id}`}
                     className="text-xs font-medium border border-gray-300 rounded px-2 py-1 text-gray-700 hover:bg-gray-50"

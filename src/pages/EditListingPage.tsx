@@ -362,7 +362,7 @@ export default function EditListingPage() {
         <WizardStepper steps={STEPS} currentStep={step} />
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Main column */}
         <div className="flex-1 min-w-0">
           {step === 1 && (
@@ -717,7 +717,7 @@ export default function EditListingPage() {
         </div>
 
         {/* Right column */}
-        <div className="w-72 flex-shrink-0 space-y-4">
+        <div className="w-full lg:w-72 flex-shrink-0 space-y-4">
           <div className="bg-white rounded-xl shadow-sm p-4">
             <p className="text-sm font-semibold text-gray-900 mb-3">Live Preview</p>
                         <div className="rounded-lg overflow-hidden bg-gray-100 aspect-video mb-2">
