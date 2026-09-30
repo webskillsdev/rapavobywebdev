@@ -1,27 +1,41 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store";
+import { useSelector, useDispatch } from "react-redux";
+import { supabase } from "../lib/supabase";
+import { clearUser } from "../store/authSlice";
+import type { RootState, AppDispatch } from "../store";
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [searchParams] = useSearchParams();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const intent = searchParams.get("intent");
 
   useEffect(() => {
-    if (isAuthenticated) {
-      if (intent === "agent") {
-        navigate("/become-agent?next=/agent-dashboard", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
+    async function handleCallback() {
+      if (!isAuthenticated) {
+        // Link didn't produce a session (expired, already used, etc.)
+        navigate("/login", { replace: true });
+        return;
       }
-    } else {
-      // Link didn't produce a session (expired, already used, etc.) —
-      // send them to log in rather than leaving a blank page.
-      navigate("/login", { replace: true });
+
+      if (intent === "agent") {
+        // Agent path: stay signed in, go straight into onboarding
+        navigate("/become-agent?next=/agent-dashboard", { replace: true });
+        return;
+      }
+
+      // Buyer path: the confirmation link technically signed them in,
+      // but we deliberately sign back out so they land on a real
+      // login screen instead of an already-authenticated dashboard.
+      await supabase.auth.signOut();
+      dispatch(clearUser());
+      navigate("/login?confirmed=1", { replace: true });
     }
-  }, [isAuthenticated, intent, navigate]);
+
+    handleCallback();
+  }, [isAuthenticated, intent, navigate, dispatch]);
 
   return (
     <div className="min-h-screen flex items-center justify-center text-gray-500">
