@@ -129,7 +129,7 @@ export default function DashboardTopBar({ onMenuClick }: { onMenuClick: () => vo
           </svg>
         </button>
 
-        {menuOpen && (
+            {menuOpen && (
           <>
             <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-40 py-1">
@@ -140,6 +140,15 @@ export default function DashboardTopBar({ onMenuClick }: { onMenuClick: () => vo
               >
                 My Dashboard
               </Link>
+              {!isAgent && (
+                <Link
+                  to="/become-agent"
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-2 text-sm text-green-700 font-medium hover:bg-green-50 sm:hidden"
+                >
+                  Become an Agent
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={handleLogout}
