@@ -60,7 +60,7 @@ export default function ListingOverviewPage() {
 
   return (
     <DashboardShell sidebar={<AgentSidebar />}>
-      <div className="flex gap-6 px-6 py-8">
+    <div className="flex flex-col lg:flex-row gap-6 px-6 py-8">
         {/* Main column */}
         <div className="flex-1 min-w-0">
           <button
@@ -353,7 +353,7 @@ export default function ListingOverviewPage() {
         </div>
 
         {/* Right column */}
-        <div className="w-72 flex-shrink-0 space-y-4">
+        <div className="w-full lg:w-72 flex-shrink-0 space-y-4">
           <div className="bg-white rounded-xl shadow-sm p-4">
             <p className="text-sm font-semibold text-gray-900 mb-3">Listing Performance</p>
             <div className="grid grid-cols-2 gap-3 text-center">
