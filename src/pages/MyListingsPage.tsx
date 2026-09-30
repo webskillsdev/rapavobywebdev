@@ -151,11 +151,11 @@ export default function MyListingsPage() {
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-semibold text-gray-900 truncate">{property.title}</p>
-                    <p className="text-sm text-gray-500">{property.location}</p>
+                    <p className="text-sm text-gray-500 truncate">{property.location}</p>
                   </div>
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full whitespace-nowrap capitalize">
+                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full whitespace-nowrap capitalize flex-shrink-0">
                     {property.status}
                   </span>
                 </div>
