@@ -41,8 +41,11 @@ export const userApi = api.injectEndpoints({
           let avatarUrl = currentUser?.photoURL;
 
           // Upload avatar if changed
-          if (avatarUri) {
-            avatarUrl = await uploadProfileImage(avatarUri, currentUser?.uid);
+                  if (avatarUri) {
+            avatarUrl =
+              typeof avatarUri === "string"
+                ? avatarUri
+                : await uploadProfileImage(avatarUri, currentUser?.uid);
           }
 
           const updatePayload = {

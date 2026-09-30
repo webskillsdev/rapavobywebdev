@@ -1,4 +1,3 @@
-import "./PropertyCard.css";
 import { useNavigate } from "react-router-dom";
 
 interface PropertyCardProps {
@@ -11,6 +10,7 @@ interface PropertyCardProps {
   bathrooms?: number | null;
   sqm?: number | null;
   listing_type?: string | null;
+  linkTo?: string;
 }
 
 function formatPrice(price: number): string {
@@ -27,38 +27,38 @@ export default function PropertyCard({
   bathrooms,
   sqm,
   listing_type,
+  linkTo,
 }: PropertyCardProps) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/property/${id}`);
+    navigate(linkTo ?? `/property/${id}`);
   };
 
   return (
     <div
-      className="property-card"
+      className="group cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
       onClick={handleCardClick}
-      style={{ cursor: "pointer" }}
     >
-      <div className="property-card__image-wrapper">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <img
           src={primary_media ?? "/placeholder-property.jpg"}
           alt={title}
-          className="property-card__image"
+          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         {listing_type && (
-          <span className="property-card__badge">
+          <span className="absolute top-3 left-3 rounded-md bg-green-600 px-2 py-1 text-xs font-semibold text-white">
             {listing_type.toUpperCase()}
           </span>
         )}
       </div>
 
-      <div className="property-card__body">
-        <h3 className="property-card__title">{title}</h3>
-        <p className="property-card__location">{location}</p>
-        <p className="property-card__price">{formatPrice(price)}</p>
+      <div className="p-4">
+        <h3 className="text-base font-semibold text-gray-900 truncate">{title}</h3>
+        <p className="text-sm text-gray-500 mt-1">{location}</p>
+        <p className="text-lg font-bold text-green-600 mt-2">{formatPrice(price)}</p>
 
-        <div className="property-card__specs">
+        <div className="mt-3 flex gap-3 text-sm text-gray-600 border-t border-gray-100 pt-3">
           {bedrooms != null && <span>{bedrooms} Beds</span>}
           {bathrooms != null && <span>{bathrooms} Baths</span>}
           {sqm != null && <span>{sqm} SQM</span>}

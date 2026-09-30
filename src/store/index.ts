@@ -1,5 +1,5 @@
 // store/index.ts
-import { configureStore, type ConfigureStoreOptions } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import { api } from "./base";
 import feedbackReducer from "./feedbackSlice";

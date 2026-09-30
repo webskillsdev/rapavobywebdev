@@ -4,8 +4,8 @@ import type { CreateRequestPayload } from "../utils/type";
 
 export const requestApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createRequest: builder.mutation<
-      { success: boolean; data: Request },
+       createRequest: builder.mutation<
+      { success: boolean; data: any },
       { requestData: CreateRequestPayload }
     >({
       async queryFn({ requestData }, api) {
@@ -22,7 +22,7 @@ export const requestApi = api.injectEndpoints({
             };
           }
 
-          const payload: Omit<Request, "id" | "created_at"> = {
+                  const payload: any = {
             ...requestData,
             user_id: user?.uid!,
             approval_status: "pending",

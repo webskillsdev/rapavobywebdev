@@ -581,19 +581,7 @@ export const propertyApi = api.injectEndpoints({
            * STEP 6
            * Detect cover image
            */
-          let coverUrl = updates.cover_url;
-
-          if (mediaItems.length > 0) {
-            const firstImage = mediaItems[0];
-
-            const matchingMedia = refreshedMedia?.find(
-              (m) =>
-                m.media_url === firstImage.uri ||
-                m.media_url.includes(firstImage.uri.split("/").pop() ?? ""),
-            );
-
-            coverUrl = matchingMedia?.media_url ?? firstImage.uri;
-          }
+         const coverUrl = updates.cover_url ?? refreshedMedia?.[0]?.media_url;
 
           /**
            * STEP 7
@@ -742,17 +730,23 @@ export const propertyApi = api.injectEndpoints({
         }
       },
 
-      invalidatesTags: ["SavedProperties", "Properties"],
+          invalidatesTags: ["SavedProperties", "Properties", "Feeds"],
     }),
-    getProperties: builder.query({
-      async queryFn({
+     getProperties: builder.query({
+            async queryFn({
         page = 1,
         limit = 10,
         search = "",
         propertyType,
+        propertyTypes,
         listingType,
+        location,
         minPrice,
         maxPrice,
+        bedrooms,
+        bathrooms,
+        amenities,
+        sort,
       }) {
         try {
           const from = (page - 1) * limit;
@@ -760,10 +754,17 @@ export const propertyApi = api.injectEndpoints({
 
           let query = supabase
             .from("properties")
-            .select(`*, property_media(*), profiles(*)`)
+            .select(`*, property_media(*), profiles(*)`, { count: "exact" })
             .eq("status", "pending")
-            .range(from, to)
-            .order("created_at", { ascending: false });
+            .range(from, to);
+
+          if (sort === "price_asc") {
+            query = query.order("price", { ascending: true });
+          } else if (sort === "price_desc") {
+            query = query.order("price", { ascending: false });
+          } else {
+            query = query.order("created_at", { ascending: false });
+          }
 
           if (search) {
             query = query.or(
@@ -771,14 +772,24 @@ export const propertyApi = api.injectEndpoints({
             );
           }
 
-          if (propertyType) query = query.eq("property_type", propertyType);
+                 if (propertyTypes && propertyTypes.length > 0) {
+            query = query.in("property_type", propertyTypes);
+          } else if (propertyType) {
+            query = query.eq("property_type", propertyType);
+          }
           if (listingType) query = query.eq("listing_type", listingType);
+          if (location) query = query.ilike("location", `%${location}%`);
           if (minPrice) query = query.gte("price", minPrice);
           if (maxPrice) query = query.lte("price", maxPrice);
+          if (bedrooms) query = query.gte("bedrooms", bedrooms);
+          if (bathrooms) query = query.gte("bathrooms", bathrooms);
+          if (amenities && amenities.length > 0) {
+            query = query.overlaps("amenities", amenities);
+          }
 
-          const { data, error } = await query;
+          const { data, error, count } = await query;
 
-          console.log(">>>>getProperties", { data, error });
+          console.log(">>>>getProperties", { data, error, count });
 
           if (error) {
             return { error: { success: false, message: error.message } };
@@ -816,6 +827,7 @@ export const propertyApi = api.injectEndpoints({
               cover_url: coverUrl,
               user_name: profile.full_name ?? null,
               user_photo: profile.avatar_url ?? null,
+              agent_verified: profile.is_verified ?? false,
               agent_phone: profile.phone_number ?? null,
               agent_email: profile.email ?? null,
               company_name: profile.company_name ?? null,
@@ -824,7 +836,7 @@ export const propertyApi = api.injectEndpoints({
             };
           });
 
-          return { data: { success: true, data: formatted } };
+          return { data: { success: true, data: formatted, total: count ?? formatted.length } };
         } catch (err: any) {
           return { error: { success: false, message: err.message } };
         }
@@ -910,7 +922,7 @@ export const propertyApi = api.injectEndpoints({
           bedrooms,
           bathrooms,
           sqm,
-          property_media(media_url, is_cover)
+          property_media(media_url, media_type, is_cover)
         `,
         )
         .eq("id", propertyId)

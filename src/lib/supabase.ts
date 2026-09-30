@@ -10,4 +10,10 @@ console.log("KEY:", supabaseUrl, supabasePublishableKey);
 if (!supabaseUrl || !supabasePublishableKey) {
   throw new Error("Missing Supabase environment variables");
 }
-export const supabase = createClient(supabaseUrl, supabasePublishableKey);
+export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
+  auth: {
+    storage: window.sessionStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});

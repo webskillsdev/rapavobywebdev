@@ -5,7 +5,7 @@ export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // SIGNUP
     signUp: builder.mutation({
-      async queryFn({ fullName, email, password }, api) {
+        async queryFn({ fullName, email, password }) {
         try {
           const { data, error } = await supabase.auth.signUp({
             email,
@@ -52,7 +52,7 @@ export const authApi = api.injectEndpoints({
     }),
 
     login: builder.mutation({
-      async queryFn({ email, password }, api) {
+         async queryFn({ email, password }) {
         try {
           // 1. Authenticate with Supabase
           const { data, error } = await supabase.auth.signInWithPassword({
@@ -146,7 +146,7 @@ export const authApi = api.injectEndpoints({
 
     // LOGOUT
     logout: builder.mutation({
-      async queryFn(_, api) {
+        async queryFn(_) {
         try {
           const { error } = await supabase.auth.signOut();
 
