@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../api/authApi";
 import { loadUserProfileIntoStore } from "../utils/loadUserProfile";
@@ -9,6 +9,8 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [login, { isLoading }] = useLoginMutation();
+  const [searchParams] = useSearchParams();
+  const justConfirmed = searchParams.get("confirmed") === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +37,12 @@ export default function LoginPage() {
   return (
     <div className="max-w-md mx-auto px-6 py-12">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Log In</h1>
+
+      {justConfirmed && (
+        <p className="text-green-700 bg-green-50 border border-green-200 rounded-md p-3 text-sm mb-4">
+          Your email is confirmed — you can log in now.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
