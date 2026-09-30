@@ -42,7 +42,7 @@ export default function DashboardTopBar({ onMenuClick }: { onMenuClick: () => vo
       </button>
 
       <form onSubmit={handleSearch} className="flex-1 flex gap-2 min-w-0">
-        <div className="relative flex-1 min-w-0">
+        <div className="relative flex-1 min-w-0 hidden sm:block">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             <circle cx="11" cy="11" r="8" />
             <path d="M21 21l-4.35-4.35" />
@@ -66,12 +66,15 @@ export default function DashboardTopBar({ onMenuClick }: { onMenuClick: () => vo
         </div>
         <button
           type="submit"
-          className="rounded-lg bg-green-600 text-white font-semibold px-5 text-sm hover:bg-green-700"
+          className="rounded-lg bg-green-600 text-white font-semibold px-5 text-sm hover:bg-green-700 flex-1 sm:flex-none flex items-center justify-center gap-2"
         >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
           Search
         </button>
       </form>
-
            <Link
         to={isAgent ? "/post-property" : "/become-agent"}
         className="hidden sm:flex items-center gap-2 rounded-lg border border-green-300 text-green-700 font-semibold text-sm px-4 py-2.5 hover:bg-green-50 whitespace-nowrap"

@@ -72,8 +72,8 @@ function FooterRow({ items, heading }: { items: FooterItem[]; heading?: ReactNod
     <div className="border-t border-gray-200 bg-white px-6 py-4">
       <div className="max-w-7xl mx-auto">
         {heading}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-6">
+        <div className="flex flex-col items-center sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-4">
+          <div className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:gap-6 w-full sm:w-auto">
             {items.map((item) => (
               <div key={item.title} className="flex items-center gap-2">
                 <FooterIcon>{item.icon}</FooterIcon>
@@ -84,7 +84,7 @@ function FooterRow({ items, heading }: { items: FooterItem[]; heading?: ReactNod
               </div>
             ))}
           </div>
-          <p className="text-xl text-green-600" style={{ fontFamily: "'Caveat', cursive" }}>
+          <p className="text-xl text-green-600 text-center" style={{ fontFamily: "'Caveat', cursive" }}>
             A Smarter Tomorrow
           </p>
         </div>
