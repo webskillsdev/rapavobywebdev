@@ -31,6 +31,7 @@ export default function SignUpPage() {
         fullName,
         email: email.trim(),
         password,
+        intent,
       }).unwrap();
 
       if (result.emailConfirmationRequired) {

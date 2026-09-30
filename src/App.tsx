@@ -13,6 +13,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import BuyerDashboardPage from "./pages/BuyerDashboardPage";
 import PostPropertyPage from "./pages/PostPropertyPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 import AgentDashboardPage from "./pages/AgentDashboardPage";
 import MyListingsPage from "./pages/MyListingsPage";
 import ListingOverviewPage from "./pages/ListingOverviewPage";
@@ -34,6 +35,7 @@ function App() {
           <Route path="/affordability" element={<AffordabilityPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/dashboard" element={<BuyerDashboardPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/post-property" element={<PostPropertyPage />} />
           <Route path="/agent-dashboard" element={<AgentDashboardPage />} />
           <Route path="/agent-dashboard" element={<AgentDashboardPage />} />

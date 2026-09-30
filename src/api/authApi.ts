@@ -5,8 +5,9 @@ export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // SIGNUP
     signUp: builder.mutation({
-        async queryFn({ fullName, email, password }) {
+      async queryFn({ fullName, email, password, intent }: any) {
         try {
+          const redirectBase = `${window.location.origin}/auth/callback`;
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -14,7 +15,7 @@ export const authApi = api.injectEndpoints({
               data: {
                 full_name: fullName,
               },
-              emailRedirectTo: "rapavo://auth/callback",
+              emailRedirectTo: intent ? `${redirectBase}?intent=${intent}` : redirectBase,
             },
           });
 
@@ -192,7 +193,7 @@ export const authApi = api.injectEndpoints({
             type: "signup",
             email: email.trim().toLowerCase(),
             options: {
-              emailRedirectTo: "rapavo://auth/callback",
+              emailRedirectTo: `${window.location.origin}/auth/callback`,
             },
           });
 
