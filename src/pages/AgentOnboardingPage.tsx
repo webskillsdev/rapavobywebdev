@@ -267,19 +267,16 @@ export default function AgentOnboardingPage() {
           <p className="text-sm text-gray-500 mb-6">
             Verified agents get a badge buyers can see across every listing.
           </p>
-          <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-5">
-            <div className="flex items-center justify-between">
-              <p className="font-semibold text-gray-900">ID & Business Document Upload</p>
-              <span className="text-[10px] uppercase tracking-wide bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded">
-                Coming next
-              </span>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Uploading a government ID and CAC document is being built as its own dedicated flow.
-              You can activate your account now and complete verification later from your Profile
-              page — nothing here is lost by continuing.
+          <Link
+            to="/verification"
+            className="block bg-green-50 border border-green-200 rounded-xl p-5 hover:bg-green-100"
+          >
+            <p className="font-semibold text-gray-900">ID & Business Document Upload</p>
+            <p className="text-xs text-gray-600 mt-2">
+              Upload your ID and business document now, or activate your account first and come
+              back to this anytime from your Profile page →
             </p>
-          </div>
+          </Link>
 
           {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
 
