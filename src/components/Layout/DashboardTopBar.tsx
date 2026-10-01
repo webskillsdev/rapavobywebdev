@@ -140,6 +140,13 @@ export default function DashboardTopBar({ onMenuClick }: { onMenuClick: () => vo
               >
                 My Dashboard
               </Link>
+              <Link
+                to="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                Settings
+              </Link>
               {!isAgent && (
                 <Link
                   to="/become-agent"
