@@ -250,6 +250,30 @@ export const uploadProfileImage = async (
   return result.secure_url;
 };
 
+export const uploadVerificationDocument = async (
+  file: File,
+  uid: string,
+  label: string,
+): Promise<string> => {
+  const data = new FormData();
+  data.append("file", file);
+  data.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset);
+  data.append("public_id", `verification_docs/${uid}/${label}-${Date.now()}`);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
+    { method: "POST", body: data },
+  );
+
+  const result = await res.json();
+
+  if (!result.secure_url) {
+    throw new Error("Document upload failed");
+  }
+
+  return result.secure_url;
+};
+
 const PROPERTY_DRAFT_KEY = "propertyCreationDraft";
 
 export interface PropertyDraft {

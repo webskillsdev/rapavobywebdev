@@ -7,6 +7,7 @@ import PublicPropertyPage from "./pages/PublicPropertyPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ProfilePage from "./pages/ProfilePage";
+import VerificationPage from "./pages/VerificationPage";
 import AgentOnboardingPage from "./pages/AgentOnboardingPage";
 import AffordabilityPage from "./pages/AffordabilityPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -32,6 +33,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/verification" element={<VerificationPage />} />
           <Route path="/affordability" element={<AffordabilityPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/dashboard" element={<BuyerDashboardPage />} />

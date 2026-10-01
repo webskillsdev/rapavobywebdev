@@ -268,17 +268,15 @@ export default function ProfilePage() {
             )}
 
             {isAgent && (
-              <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-5">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-gray-900">Identity & Business Verification</p>
-                  <span className="text-[10px] uppercase tracking-wide bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded">
-                    Coming next
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  Uploading an ID and CAC document to earn the Verified Agent badge is being built as its own dedicated flow.
+              <Link
+                to="/verification"
+                className="block bg-green-50 border border-green-200 rounded-xl p-5 hover:bg-green-100"
+              >
+                <p className="font-semibold text-gray-900">Identity & Business Verification</p>
+                <p className="text-xs text-gray-600 mt-2">
+                  Upload your ID and business document to earn the Verified Agent badge →
                 </p>
-              </div>
+              </Link>
             )}
 
             {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}

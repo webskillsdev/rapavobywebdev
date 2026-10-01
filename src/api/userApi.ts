@@ -542,4 +542,8 @@ export const {
   useUpdateProfileMutation,
   useGetUserProfileQuery,
   useSwitchAccountModeMutation,
+  useSubmitIdVerificationMutation,
+  useSubmitDocumentVerificationMutation,
+  useGetMyIdVerificationQuery,
+  useGetMyDocumentVerificationQuery,
 } = userApi;
