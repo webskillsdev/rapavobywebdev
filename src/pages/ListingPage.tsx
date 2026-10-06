@@ -7,6 +7,7 @@ import { useGetPropertiesQuery, useToggleSavedPropertyMutation } from "../api/pr
 import PropertyCard from "../components/PropertyCard/PropertyCard";
 import exploreHero from "../assets/explore-hero.jpg";
 import { buildShareSlug } from "../utils/slug";
+import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../components/Explore/ExploreStates";
 import type { RootState } from "../store";
 
 const categoryImages = import.meta.glob("../assets/category-*.{jpg,jpeg,png}", {
@@ -201,7 +202,7 @@ export default function ListingPage() {
     .map(([name, count]) => ({ name, count: count as number }))
     .sort((a, b) => b.count - a.count);
 
-  const { data, isLoading, error } = useGetPropertiesQuery({
+  const { data, isLoading, error, refetch } = useGetPropertiesQuery({
     page,
     limit: 16,
     search,
@@ -215,6 +216,14 @@ export default function ListingPage() {
   });
 
    const { isAuthenticated } = useSelector((state: RootStateType) => state.auth);
+
+  function clearAllFilters() {
+    setSearch("");
+    setMinPrice("");
+    setMaxPrice("");
+    setPropertyType("");
+    setPage(1);
+  }
 
   if (isAuthenticated) {
     return (
@@ -415,8 +424,24 @@ export default function ListingPage() {
 
             <RecentlyAddedSection />
 
-        {isLoading && <p className="mt-6 text-gray-500">Loading properties...</p>}
-        {error ? <p className="mt-6 text-red-600">Something went wrong loading properties.</p> : null}
+        {isLoading && <ExploreSkeletonGrid />}
+        {error ? (
+          <ExploreErrorState
+            onRetry={() => refetch()}
+            onSearchAgain={clearAllFilters}
+            homeTo="/"
+          />
+        ) : null}
+        {!isLoading && !error && (data?.data?.length ?? 0) === 0 && (
+          <ExploreEmptyState
+            onClearFilters={clearAllFilters}
+            onOtherLocations={() => {
+              setSearch("");
+              setPage(1);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        )}
 
         <div id="results" className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {data?.data?.map((property) => (

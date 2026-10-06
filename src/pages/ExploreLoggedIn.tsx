@@ -16,6 +16,7 @@ function findLocationImage(name: string): string | null {
 }
 
 import DashboardShell from "../components/Layout/DashboardShell";
+import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../components/Explore/ExploreStates";
 import Sidebar from "../components/Layout/Sidebar";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 import promoImage from "../assets/list-property-promo.jpg";
@@ -164,7 +165,7 @@ export default function ExploreLoggedIn({
     setLocalPage(1);
   }
 
-  const { data, isLoading, error } = useGetPropertiesQuery({
+  const { data, isLoading, error, refetch } = useGetPropertiesQuery({
     page: localPage,
     limit: 12,
     search,
@@ -180,6 +181,19 @@ export default function ExploreLoggedIn({
 
   const items = data?.data ?? [];
   const total = data?.total ?? 0;
+
+  function clearAllFilters() {
+    setSearch("");
+    setMinPrice("");
+    setMaxPrice("");
+    setBedrooms("");
+    setBathrooms("");
+    setMinSqm("");
+    setSelectedAmenities([]);
+    setSpecificType("");
+    setLocalPage(1);
+    setPage(1);
+  }
 
   function handlePageChange(p: number) {
     setLocalPage(p);
@@ -349,9 +363,24 @@ export default function ExploreLoggedIn({
                 {isLoading ? "Loading..." : `${total.toLocaleString()} ${total === 1 ? "property" : "properties"} found`}
               </p>
 
-              {error ? <p className="text-sm text-red-600">Something went wrong loading properties.</p> : null}
-              {!isLoading && items.length === 0 && (
-                <p className="text-sm text-gray-500">No properties match your search.</p>
+              {isLoading && <ExploreSkeletonGrid count={6} columns="grid-cols-1 sm:grid-cols-2" />}
+              {error ? (
+                <ExploreErrorState
+                  onRetry={() => refetch()}
+                  onSearchAgain={clearAllFilters}
+                  homeTo={user?.currentMode === "agent" ? "/agent-dashboard" : "/dashboard"}
+                />
+              ) : null}
+              {!isLoading && !error && items.length === 0 && (
+                <ExploreEmptyState
+                  onClearFilters={clearAllFilters}
+                  onOtherLocations={() => {
+                    setSearch("");
+                    setLocalPage(1);
+                    setPage(1);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                />
               )}
 
                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
