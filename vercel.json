@@ -1,5 +1,27 @@
 {
   "rewrites": [
+    {
+      "source": "/property/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|LinkedInBot|Slackbot|Discordbot|Googlebot|bingbot|Applebot|Pinterestbot|SkypeUriPreview|Embedly|redditbot).*"
+        }
+      ],
+      "destination": "/api/meta?kind=property&slug=:slug"
+    },
+    {
+      "source": "/share/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|LinkedInBot|Slackbot|Discordbot|Googlebot|bingbot|Applebot|Pinterestbot|SkypeUriPreview|Embedly|redditbot).*"
+        }
+      ],
+      "destination": "/api/meta?kind=share&slug=:slug"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
