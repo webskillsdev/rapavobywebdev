@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { supabase } from "../lib/supabase";
 import { clearUser } from "../store/authSlice";
 import type { RootState, AppDispatch } from "../store";
+import { safeNext } from "../utils/redirect";
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const intent = searchParams.get("intent");
+  const next = safeNext(searchParams.get("next"));
 
   useEffect(() => {
     async function handleCallback() {
@@ -31,11 +33,14 @@ export default function AuthCallbackPage() {
       // login screen instead of an already-authenticated dashboard.
       await supabase.auth.signOut();
       dispatch(clearUser());
-      navigate("/login?confirmed=1", { replace: true });
+      navigate(
+        next ? `/login?confirmed=1&next=${encodeURIComponent(next)}` : "/login?confirmed=1",
+        { replace: true },
+      );
     }
 
     handleCallback();
-  }, [isAuthenticated, intent, navigate, dispatch]);
+  }, [isAuthenticated, intent, next, navigate, dispatch]);
 
   return (
     <div className="min-h-screen flex items-center justify-center text-gray-500">

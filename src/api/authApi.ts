@@ -1,13 +1,19 @@
 import { supabase } from "../lib/supabase";
 import { api } from "../store/base";
+import { safeNext } from "../utils/redirect";
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // SIGNUP
     signUp: builder.mutation({
-      async queryFn({ fullName, email, password, intent }: any) {
+async queryFn({ fullName, email, password, intent, next }: any) {
         try {
           const redirectBase = `${window.location.origin}/auth/callback`;
+          const redirectParams = new URLSearchParams();
+          if (intent) redirectParams.set("intent", intent);
+          const safePath = safeNext(next);
+          if (safePath) redirectParams.set("next", safePath);
+          const redirectQuery = redirectParams.toString();
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -15,7 +21,7 @@ export const authApi = api.injectEndpoints({
               data: {
                 full_name: fullName,
               },
-              emailRedirectTo: intent ? `${redirectBase}?intent=${intent}` : redirectBase,
+emailRedirectTo: redirectQuery ? `${redirectBase}?${redirectQuery}` : redirectBase,
             },
           });
 

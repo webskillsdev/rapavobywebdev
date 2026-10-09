@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../api/authApi";
 import { loadUserProfileIntoStore } from "../utils/loadUserProfile";
 import type { AppDispatch } from "../store";
+import { safeNext, withNext } from "../utils/redirect";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function LoginPage() {
   const [login, { isLoading }] = useLoginMutation();
   const [searchParams] = useSearchParams();
   const justConfirmed = searchParams.get("confirmed") === "1";
+  const next = safeNext(searchParams.get("next"));
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +30,7 @@ export default function LoginPage() {
       }).unwrap();
       const user = result.data.user;
       await loadUserProfileIntoStore(dispatch, user.id, user.email ?? email);
-      navigate("/dashboard");
+      navigate(next ?? "/dashboard", { replace: true });
     } catch (err: any) {
       setFormError(err?.message || "Unable to log in. Check your details and try again.");
     }
@@ -37,6 +39,12 @@ export default function LoginPage() {
   return (
     <div className="max-w-md mx-auto px-6 py-12">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Log In</h1>
+
+      {next && (
+        <p className="text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-3 mb-4">
+          Log in to continue where you left off.
+        </p>
+      )}
 
       {justConfirmed && (
         <p className="text-green-700 bg-green-50 border border-green-200 rounded-md p-3 text-sm mb-4">
@@ -96,7 +104,7 @@ export default function LoginPage() {
 
       <p className="text-sm text-gray-500 mt-6 text-center">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-green-600 font-medium hover:underline">
+        <Link to={withNext("/signup", next)} className="text-green-600 font-medium hover:underline">
           Sign Up
         </Link>
       </p>

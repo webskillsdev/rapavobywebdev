@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSignUpMutation } from "../api/authApi";
 import { loadUserProfileIntoStore } from "../utils/loadUserProfile";
 import type { AppDispatch } from "../store";
+import { safeNext, withNext } from "../utils/redirect";
 
 type Intent = "buyer" | "agent" | null;
 
@@ -11,6 +12,8 @@ export default function SignUpPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [signUp, { isLoading }] = useSignUpMutation();
+  const [searchParams] = useSearchParams();
+  const next = safeNext(searchParams.get("next"));
 
   const [intent, setIntent] = useState<Intent>(null);
 
@@ -32,6 +35,7 @@ export default function SignUpPage() {
         email: email.trim(),
         password,
         intent,
+        next,
       }).unwrap();
 
       if (result.emailConfirmationRequired) {
@@ -45,7 +49,7 @@ export default function SignUpPage() {
       if (intent === "agent") {
         navigate("/become-agent?next=/agent-dashboard");
       } else {
-        navigate("/dashboard");
+  navigate(next ?? "/dashboard", { replace: true });
       }
     } catch (err: any) {
       setFormError(err?.message || "Unable to create your account. Please try again.");
@@ -97,7 +101,7 @@ export default function SignUpPage() {
 
         <p className="text-sm text-gray-500 mt-6 text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-600 font-medium hover:underline">
+<Link to={withNext("/login", next)} className="text-green-600 font-medium hover:underline">
             Log In
           </Link>
         </p>

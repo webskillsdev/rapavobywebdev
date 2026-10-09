@@ -1,5 +1,8 @@
 import { useState, type ReactNode } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
+import SignInPrompt from "../components/SignInPrompt";
 import { useGetSinglePropertyQuery, useToggleSavedPropertyMutation, useGetFeedsQuery } from "../api/propertyApi";
 import { extractIdFromSlug, buildShareSlug } from "../utils/slug";
 import { toWhatsAppNumber, whatsappLink } from "../utils/contact";
@@ -354,7 +357,30 @@ function SimilarProperties({ propertyType, currentId }: { propertyType: string; 
   );
 }
 
+function ActionIcon({ children }: { children: ReactNode }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>
+  );
+}
+
+const MESSAGE_ICON = <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
+const CALL_ICON = (
+  <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
+);
+const VISIT_ICON = (
+  <>
+    <rect x="3" y="4" width="18" height="18" rx="2" />
+    <path d="M16 2v4M8 2v4M3 10h18" />
+  </>
+);
+
 function AgentCard({ property }: { property: any }) {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const location = useLocation();
+  const [promptOpen, setPromptOpen] = useState(false);
+
   const profile = property.profiles ?? {};
   const name = profile.full_name ?? property.agent_name;
   const company = property.company_name ?? profile.company_name;
@@ -363,6 +389,9 @@ function AgentCard({ property }: { property: any }) {
   const verified = !!profile.is_verified;
 
   if (!name && !callNumber) return null;
+
+  // The page the visitor is on right now — used to bring them back after login/signup.
+  const currentPath = `${location.pathname}${location.search}`;
 
   const pageUrl = `${window.location.origin}/property/${buildShareSlug(property.title, property.id)}`;
   const messageLink = waNumber
@@ -374,6 +403,8 @@ function AgentCard({ property }: { property: any }) {
 
   const base = "flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold w-full";
   const off = "border border-gray-200 text-gray-300 cursor-not-allowed";
+  const primary = `${base} bg-green-700 text-white hover:bg-green-800`;
+  const outline = `${base} border border-green-600 text-green-700 hover:bg-green-50`;
 
   return (
     <div className="mt-6 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
@@ -425,40 +456,61 @@ function AgentCard({ property }: { property: any }) {
       )}
 
       <div className="mt-4 space-y-2.5">
-        {messageLink ? (
-          <a href={messageLink} target="_blank" rel="noreferrer" className={`${base} bg-green-700 text-white hover:bg-green-800`}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            Message Agent
-          </a>
-        ) : (
-          <span className={`${base} ${off}`}>Message Agent</span>
-        )}
+        {isAuthenticated ? (
+          <>
+            {messageLink ? (
+              <a href={messageLink} target="_blank" rel="noreferrer" className={primary}>
+                <ActionIcon>{MESSAGE_ICON}</ActionIcon>
+                Message Agent
+              </a>
+            ) : (
+              <span className={`${base} ${off}`}>Message Agent</span>
+            )}
 
-        {callNumber ? (
-          <a href={`tel:${callNumber}`} className={`${base} border border-green-600 text-green-700 hover:bg-green-50`}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
-            </svg>
-            Call Agent
-          </a>
-        ) : (
-          <span className={`${base} ${off}`}>Call Agent</span>
-        )}
+            {callNumber ? (
+              <a href={`tel:${callNumber}`} className={outline}>
+                <ActionIcon>{CALL_ICON}</ActionIcon>
+                Call Agent
+              </a>
+            ) : (
+              <span className={`${base} ${off}`}>Call Agent</span>
+            )}
 
-        {visitLink ? (
-          <a href={visitLink} target="_blank" rel="noreferrer" className={`${base} border border-green-600 text-green-700 hover:bg-green-50`}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
-            Book a Site Visit
-          </a>
+            {visitLink ? (
+              <a href={visitLink} target="_blank" rel="noreferrer" className={outline}>
+                <ActionIcon>{VISIT_ICON}</ActionIcon>
+                Book a Site Visit
+              </a>
+            ) : (
+              <span className={`${base} ${off}`}>Book a Site Visit</span>
+            )}
+          </>
         ) : (
-          <span className={`${base} ${off}`}>Book a Site Visit</span>
+          <>
+            <button type="button" onClick={() => setPromptOpen(true)} className={primary}>
+              <ActionIcon>{MESSAGE_ICON}</ActionIcon>
+              Message Agent
+            </button>
+            <button type="button" onClick={() => setPromptOpen(true)} className={outline}>
+              <ActionIcon>{CALL_ICON}</ActionIcon>
+              Call Agent
+            </button>
+            <button type="button" onClick={() => setPromptOpen(true)} className={outline}>
+              <ActionIcon>{VISIT_ICON}</ActionIcon>
+              Book a Site Visit
+            </button>
+          </>
         )}
       </div>
+
+      {promptOpen && !isAuthenticated && (
+        <SignInPrompt
+          title="Sign in to contact this agent"
+          message={`Log in or create a free Rapavo account to call or message ${name ?? "the agent"} about this property. You'll come straight back to this page.`}
+          next={currentPath}
+          onClose={() => setPromptOpen(false)}
+        />
+      )}
     </div>
   );
 }
