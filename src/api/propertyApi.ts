@@ -855,7 +855,8 @@ export const propertyApi = api.injectEndpoints({
             .select(
               `
             *,
-            property_media(*)
+            property_media(*),
+            profiles(full_name, avatar_url, is_verified, whatsapp_number, company_name)
           `,
             )
             .eq("id", propertyId)

@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useGetSinglePropertyQuery, useToggleSavedPropertyMutation, useGetFeedsQuery } from "../api/propertyApi";
 import { extractIdFromSlug, buildShareSlug } from "../utils/slug";
+import { toWhatsAppNumber, whatsappLink } from "../utils/contact";
 const AMENITY_ICONS: Record<string, ReactNode> = {
   "Swimming Pool": <path d="M2 12h20M2 17h20M7 7a3 3 0 0 1 3-3c1.5 0 2 1 3 1s1.5-1 3-1a3 3 0 0 1 3 3" />,
   "Fitted Kitchen": <><path d="M4 3h16v18H4z" /><path d="M4 10h16M9 3v7" /></>,
@@ -194,47 +195,8 @@ export default function PropertyDetailsPage() {
         </div>
       )}
 
-      {/* Agent / contact card */}
-      {(property.agent_name || property.agent_phone) && (
-        <div className="mt-6 bg-gray-50 border border-gray-200 rounded-xl p-4">
-          <h2 className="font-semibold text-gray-900 mb-3">Contact</h2>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="h-11 w-11 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-semibold flex-shrink-0">
-              {(property.agent_name ?? "?").charAt(0).toUpperCase()}
-            </span>
-            <div>
-              <p className="text-sm font-semibold text-gray-900">{property.agent_name}</p>
-              {property.company_name && <p className="text-xs text-gray-500">{property.company_name}</p>}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {property.agent_phone ? (
-              <a
-                href={`tel:${property.agent_phone}`}
-                className="text-center text-sm font-medium border border-gray-300 rounded-md px-2 py-2 text-gray-700 hover:bg-white"
-              >
-                Call Agent
-              </a>
-            ) : (
-              <span className="text-center text-sm font-medium border border-gray-200 rounded-md px-2 py-2 text-gray-300 cursor-not-allowed">
-                Call Agent
-              </span>
-            )}
-            <span
-              title="Coming soon — needs the Messages feature"
-              className="text-center text-sm font-medium border border-gray-200 rounded-md px-2 py-2 text-gray-300 cursor-not-allowed"
-            >
-              Message
-            </span>
-            <span
-              title="Coming soon — not built yet"
-              className="text-center text-sm font-medium border border-gray-200 rounded-md px-2 py-2 text-gray-300 cursor-not-allowed"
-            >
-              Book Visit
-            </span>
-          </div>
-        </div>
-      )}
+           {/* Agent card */}
+      <AgentCard property={property} />
 
        {/* Location detail */}
       {(property.state || property.lga || property.area || property.estate) && (
@@ -387,6 +349,115 @@ function SimilarProperties({ propertyType, currentId }: { propertyType: string; 
             </div>
           </Link>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function AgentCard({ property }: { property: any }) {
+  const profile = property.profiles ?? {};
+  const name = profile.full_name ?? property.agent_name;
+  const company = property.company_name ?? profile.company_name;
+  const callNumber: string | null = property.agent_phone ?? null;
+  const waNumber = toWhatsAppNumber(profile.whatsapp_number ?? property.agent_phone);
+  const verified = !!profile.is_verified;
+
+  if (!name && !callNumber) return null;
+
+  const pageUrl = `${window.location.origin}/property/${buildShareSlug(property.title, property.id)}`;
+  const messageLink = waNumber
+    ? whatsappLink(waNumber, `Hello, I'm interested in "${property.title}" on Rapavo. ${pageUrl}`)
+    : null;
+  const visitLink = waNumber
+    ? whatsappLink(waNumber, `Hello, I'd like to book a site visit for "${property.title}" on Rapavo. ${pageUrl}`)
+    : null;
+
+  const base = "flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold w-full";
+  const off = "border border-gray-200 text-gray-300 cursor-not-allowed";
+
+  return (
+    <div className="mt-6 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+      <div className="flex items-center gap-3">
+        {profile.avatar_url ? (
+          <img src={profile.avatar_url} alt={name} className="h-14 w-14 rounded-full object-cover flex-shrink-0" />
+        ) : (
+          <span className="h-14 w-14 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-lg font-semibold flex-shrink-0">
+            {(name ?? "?").charAt(0).toUpperCase()}
+          </span>
+        )}
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 text-base font-semibold text-gray-900">
+            <span className="truncate">{name}</span>
+            {verified && (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 flex-shrink-0">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 12l3 3 5-6" />
+              </svg>
+            )}
+          </p>
+          {company && <p className="text-sm text-gray-500 truncate">{company}</p>}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        disabled
+        title="Coming soon — following agents isn't available yet"
+        className={`${base} ${off} mt-4`}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M19 8v6M22 11h-6" />
+        </svg>
+        Follow
+        <span className="text-[10px] uppercase tracking-wide bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded">Soon</span>
+      </button>
+
+      {verified && (
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-green-50 text-green-700 text-xs font-medium px-2.5 py-1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+          Verified Agent
+        </div>
+      )}
+
+      <div className="mt-4 space-y-2.5">
+        {messageLink ? (
+          <a href={messageLink} target="_blank" rel="noreferrer" className={`${base} bg-green-700 text-white hover:bg-green-800`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            Message Agent
+          </a>
+        ) : (
+          <span className={`${base} ${off}`}>Message Agent</span>
+        )}
+
+        {callNumber ? (
+          <a href={`tel:${callNumber}`} className={`${base} border border-green-600 text-green-700 hover:bg-green-50`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
+            </svg>
+            Call Agent
+          </a>
+        ) : (
+          <span className={`${base} ${off}`}>Call Agent</span>
+        )}
+
+        {visitLink ? (
+          <a href={visitLink} target="_blank" rel="noreferrer" className={`${base} border border-green-600 text-green-700 hover:bg-green-50`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+            Book a Site Visit
+          </a>
+        ) : (
+          <span className={`${base} ${off}`}>Book a Site Visit</span>
+        )}
       </div>
     </div>
   );
