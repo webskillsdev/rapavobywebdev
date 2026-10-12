@@ -15,7 +15,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Buyer Dashboard", to: "/dashboard" },
   { label: "Feed", to: "/feed" },
   { label: "Explore", to: "/" },
-  { label: "Saved Properties", to: "/dashboard#saved", countKey: "saved" },
+  { label: "Saved Properties", to: "/saved", countKey: "saved" },
   { label: "Property Alerts", to: null },
   { label: "Comparisons", to: null },
   { label: "Messages", to: null },

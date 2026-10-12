@@ -21,7 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Transactions", to: null },
   { label: "Analytics", to: null },
   { label: "Reviews", to: null },
-  { label: "Saved", to: null },
+  { label: "Saved", to: "/saved" },
   { label: "Followers", to: null },
   { label: "Profile", to: "/profile" },
   { label: "Settings", to: null },

@@ -680,57 +680,153 @@ export const propertyApi = api.injectEndpoints({
 
       invalidatesTags: ["Properties", "Feeds"],
     }),
-    toggleSavedProperty: builder.mutation({
-      async queryFn(propertyId, api) {
-        console.log(">>>>>>propertyId from api", propertyId);
-
+toggleSavedProperty: builder.mutation({
+      async queryFn(propertyId: string, api) {
         try {
           const state = api.getState() as any;
+          const userId = state.auth.user?.uid;
 
-          const currentUser = state.auth.user;
+          if (!userId) {
+            return {
+              error: {
+                success: false,
+                message: "Please sign in to save properties.",
+              },
+            };
+          }
 
-          const { data: existing } = await supabase
+          const { data: existing, error: lookupError } = await supabase
             .from("saved_properties")
             .select("id")
-            .eq("user_id", currentUser?.uid)
-            .eq("property_id", propertyId)
-            .maybeSingle();
+            .eq("user_id", userId)
+            .eq("property_id", propertyId);
 
-          let saved = false;
+          if (lookupError) throw lookupError;
 
-          if (existing) {
-            await supabase
+          let saved: boolean;
+
+          if (existing && existing.length > 0) {
+            const { data: removed, error: deleteError } = await supabase
               .from("saved_properties")
               .delete()
-              .eq("id", existing.id);
+              .eq("user_id", userId)
+              .eq("property_id", propertyId)
+              .select("id");
 
+            if (deleteError) throw deleteError;
+            if (!removed || removed.length === 0) {
+              throw new Error("The saved property could not be removed (permission denied).");
+            }
             saved = false;
           } else {
-            await supabase.from("saved_properties").insert({
-              user_id: currentUser?.uid,
-              property_id: propertyId,
-            });
+            const { error: insertError } = await supabase
+              .from("saved_properties")
+              .insert({ user_id: userId, property_id: propertyId });
 
+            if (insertError) throw insertError;
             saved = true;
           }
 
-          return {
-            data: {
-              success: true,
-              saved,
-            },
-          };
+          return { data: { success: true, saved } };
         } catch (err: any) {
+          console.error("[toggleSavedProperty] failed:", err);
           return {
             error: {
               success: false,
-              message: err.message,
+              message: err?.message ?? "Unable to update saved properties.",
             },
           };
         }
       },
 
-          invalidatesTags: ["SavedProperties", "Properties", "Feeds"],
+      // Update the heart/Save button straight away, before the server answers.
+      // If the request fails, the change is rolled back.
+      async onQueryStarted(propertyId: string, { dispatch, getState, queryFulfilled }) {
+        const anyApi = api as any;
+        const state = getState();
+
+        let current: boolean | undefined;
+        const savedList = anyApi.endpoints.getSavedProperties.select(undefined)(state)?.data?.data;
+        if (Array.isArray(savedList) && savedList.some((i: any) => i.id === propertyId)) {
+          current = true;
+        }
+
+        const single = anyApi.endpoints.getSingleProperty.select(propertyId)(state)?.data?.data;
+        if (current === undefined && single) current = !!single.saved;
+
+        if (current === undefined) {
+          for (const name of ["getProperties", "getFeeds"]) {
+            for (const args of anyApi.util.selectCachedArgsForQuery(state, name)) {
+              const list = anyApi.endpoints[name].select(args)(state)?.data?.data;
+              const hit = Array.isArray(list) ? list.find((i: any) => i.id === propertyId) : undefined;
+              if (hit) {
+                current = !!hit.saved;
+                break;
+              }
+            }
+            if (current !== undefined) break;
+          }
+        }
+
+        const nextSaved = !(current ?? false);
+        const patches: any[] = [];
+
+        for (const name of ["getProperties", "getFeeds"]) {
+          for (const args of anyApi.util.selectCachedArgsForQuery(state, name)) {
+            patches.push(
+              dispatch(
+                anyApi.util.updateQueryData(name, args, (draft: any) => {
+                  if (Array.isArray(draft?.data)) {
+                    draft.data.forEach((item: any) => {
+                      if (item.id === propertyId) item.saved = nextSaved;
+                    });
+                  }
+                }),
+              ),
+            );
+          }
+        }
+
+        if (!nextSaved) {
+          patches.push(
+            dispatch(
+              anyApi.util.updateQueryData("getSavedProperties", undefined, (draft: any) => {
+                if (Array.isArray(draft?.data)) {
+                  draft.data = draft.data.filter((item: any) => item.id !== propertyId);
+                }
+              }),
+            ),
+          );
+        }
+
+        if (!nextSaved) {
+          patches.push(
+            dispatch(
+              anyApi.util.updateQueryData("getSavedProperties", undefined, (draft: any) => {
+                if (Array.isArray(draft?.data)) {
+                  draft.data = draft.data.filter((item: any) => item.id !== propertyId);
+                }
+              }),
+            ),
+          );
+        }
+
+        patches.push(
+          dispatch(
+            anyApi.util.updateQueryData("getSingleProperty", propertyId, (draft: any) => {
+              if (draft?.data) draft.data.saved = nextSaved;
+            }),
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach((patch) => patch.undo());
+        }
+      },
+
+      invalidatesTags: ["SavedProperties", "Properties", "Feeds"],
     }),
      getProperties: builder.query({
             async queryFn({
@@ -1007,8 +1103,21 @@ export const propertyApi = api.injectEndpoints({
           // flatten structure
           // const favorites = data.map((item: any) => item.properties);
 
-          const savedProperties = data.map((item: any) => ({
+          const savedProperties = data
+            .filter((item: any) => item.properties)
+            .map((item: any) => ({
             ...item.properties,
+            saved_at: item.created_at,
+            primary_media: (() => {
+              const media = item.properties.property_media ?? [];
+              const image =
+                media.find((m: any) => m.is_cover && m.media_type !== "video") ??
+                media.find((m: any) => m.media_type !== "video");
+              const url = image?.media_url ?? item.properties.cover_url ?? null;
+              return url
+                ? url.replace("/upload/", "/upload/w_600,h_400,c_fill,q_auto,f_auto/")
+                : null;
+            })(),
             agent_name: item.properties.profiles?.full_name,
             agent_photo: item.properties.profiles?.avatar_url,
             agent_email: item.properties.profiles?.email,
