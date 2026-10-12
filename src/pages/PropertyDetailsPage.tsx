@@ -3,7 +3,8 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import SignInPrompt from "../components/SignInPrompt";
-import { useGetSinglePropertyQuery, useToggleSavedPropertyMutation, useGetFeedsQuery } from "../api/propertyApi";
+import { useGetSinglePropertyQuery, useGetFeedsQuery } from "../api/propertyApi";
+import { useSaveProperty } from "../hooks/useSaveProperty";
 import { extractIdFromSlug, buildShareSlug } from "../utils/slug";
 import { toWhatsAppNumber, whatsappLink } from "../utils/contact";
 const AMENITY_ICONS: Record<string, ReactNode> = {
@@ -37,7 +38,7 @@ export default function PropertyDetailsPage() {
   const { slug } = useParams();
   const id = extractIdFromSlug(slug ?? "");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [toggleSaved] = useToggleSavedPropertyMutation();
+  const { save, savePrompt } = useSaveProperty();
 
   const { data, isLoading, error } = useGetSinglePropertyQuery(id as string);
 
@@ -146,7 +147,7 @@ export default function PropertyDetailsPage() {
                 <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => toggleSaved(property.id)}
+            onClick={() => save(property)}
             className={
               property.saved
                 ? "rounded-md border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700"
@@ -155,6 +156,7 @@ export default function PropertyDetailsPage() {
           >
             {property.saved ? "Saved" : "Save"}
           </button>
+          {savePrompt}
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetFeedsQuery, useToggleSavedPropertyMutation, useGetMatchingPropertiesForMyRequestsQuery } from "../api/propertyApi";
+import { useGetFeedsQuery, useGetMatchingPropertiesForMyRequestsQuery } from "../api/propertyApi";
+import { useSaveProperty } from "../hooks/useSaveProperty";
 import promoCard from "../assets/list-property-promo.jpg";
 const TABS = [
   { label: "For You", filter: {} },
@@ -31,7 +32,7 @@ export default function FeedPage() {
   });
 
     const items = data?.data ?? [];
-  const [toggleSaved] = useToggleSavedPropertyMutation();
+  const { save, savePrompt } = useSaveProperty();
   const { data: matchesData } = useGetMatchingPropertiesForMyRequestsQuery();
   const matches = matchesData?.data ?? [];
 
@@ -51,6 +52,7 @@ export default function FeedPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 flex gap-6">
+      {savePrompt}
       <div className="max-w-2xl flex-1 min-w-0">
       <h1 className="text-2xl font-bold text-gray-900 mb-4">Feed</h1>
 
@@ -145,7 +147,7 @@ export default function FeedPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => toggleSaved(item.id)}
+                  onClick={() => save(item)}
                   className={item.saved ? "flex items-center gap-1.5 text-green-600 font-medium ml-auto" : "flex items-center gap-1.5 text-gray-600 hover:text-gray-900 ml-auto"}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill={item.saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

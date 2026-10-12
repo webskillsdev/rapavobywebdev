@@ -1,7 +1,8 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetPropertiesQuery, useToggleSavedPropertyMutation } from "../api/propertyApi";
+import { useGetPropertiesQuery } from "../api/propertyApi";
+import { useSaveProperty } from "../hooks/useSaveProperty";
 import { buildShareSlug } from "../utils/slug";
 import type { RootState } from "../store";
 const locationImages = import.meta.glob("../assets/location-*.{jpg,jpeg,png}", {
@@ -46,21 +47,16 @@ const AMENITIES_LIST = [
 const BED_BATH_OPTIONS = ["Any", "1", "2", "3", "4", "5+"];
 
 function ExploreCard({ property }: { property: any }) {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const [toggleSaved] = useToggleSavedPropertyMutation();
+  const { save, savePrompt } = useSaveProperty();
 
   function handleHeartClick(e: React.MouseEvent) {
     e.stopPropagation();
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-    toggleSaved(property.id);
+    save(property);
   }
 
   return (
     <div className="rounded-xl border border-gray-200 overflow-hidden hover:shadow-sm transition">
+      {savePrompt}
       <div className="relative aspect-[4/3] bg-gray-100">
         {property.primary_media && (
           <img src={property.primary_media} className="h-full w-full object-cover" />

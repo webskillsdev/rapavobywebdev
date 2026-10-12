@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import type { RootState as RootStateType } from "../store";
 import ExploreLoggedIn from "./ExploreLoggedIn";
-import { useGetPropertiesQuery, useToggleSavedPropertyMutation } from "../api/propertyApi";
+import { useGetPropertiesQuery } from "../api/propertyApi";
+import { useSaveProperty } from "../hooks/useSaveProperty";
 import PropertyCard from "../components/PropertyCard/PropertyCard";
 import exploreHero from "../assets/explore-hero.jpg";
 import { buildShareSlug } from "../utils/slug";
 import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../components/Explore/ExploreStates";
-import type { RootState } from "../store";
 
 const categoryImages = import.meta.glob("../assets/category-*.{jpg,jpeg,png}", {
   eager: true,
@@ -52,21 +52,16 @@ const RECOMMENDED_TABS = [
 ];
 
 function FeaturedCard({ property }: { property: any }) {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const [toggleSaved] = useToggleSavedPropertyMutation();
+  const { save, savePrompt } = useSaveProperty();
 
   function handleHeartClick(e: React.MouseEvent) {
     e.stopPropagation();
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-    toggleSaved(property.id);
+    save(property);
   }
 
   return (
     <div className="rounded-xl border border-gray-200 overflow-hidden hover:shadow-sm transition">
+      {savePrompt}
       <div className="relative aspect-[4/3] bg-gray-100">
         {property.primary_media && (
           <img src={property.primary_media} className="h-full w-full object-cover" />
