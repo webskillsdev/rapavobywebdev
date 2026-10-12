@@ -508,7 +508,7 @@ function AgentCard({ property }: { property: any }) {
       {promptOpen && !isAuthenticated && (
         <SignInPrompt
           title="Sign in to contact this agent"
-          message={`Log in or create a free Rapavo account to call or message ${name ?? "the agent"} about this property. You'll come straight back to this page.`}
+          message={`Log in or create account with Rapavo to call or message ${name ?? "the agent"} about this property. You will be redirected back to this page after signing in..`}
           next={currentPath}
           onClose={() => setPromptOpen(false)}
         />

@@ -53,7 +53,7 @@ export default function SignInPrompt({ title, message, next, onClose }: Props) {
             to={withNext("/signup", next)}
             className="flex w-full items-center justify-center rounded-lg border border-green-600 px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-50"
           >
-            Create a free account
+            Create Account
           </Link>
         </div>
       </div>
