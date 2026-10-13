@@ -21,6 +21,7 @@ import ListingOverviewPage from "./pages/ListingOverviewPage";
 import EditListingPage from "./pages/EditListingPage";
 import FeedPage from "./pages/FeedPage";
 import SavedPropertiesPage from "./pages/SavedPropertiesPage";
+import CardPreviewPage from "./pages/CardPreviewPage";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
           <Route path="/my-listings/:id/edit" element={<EditListingPage />} />
           <Route path="/feed" element={<FeedPage />} />
           <Route path="/saved" element={<SavedPropertiesPage />} />
+          <Route path="/card-preview" element={<CardPreviewPage />} />
         </Routes>
       </Layout>
     </AuthListener>
