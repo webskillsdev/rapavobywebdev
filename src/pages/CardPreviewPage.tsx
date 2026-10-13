@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetSinglePropertyQuery } from "../api/propertyApi";
 import { extractIdFromSlug } from "../utils/slug";
 import { buildResidentialCardData, shareCardKindOf } from "../components/share-cards/buildShareCardData";
+import { generateCardImage, shareCardFileName } from "../components/share-cards/generateCardImage";
 import ResidentialShareCard, {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -97,6 +98,63 @@ const CASES: { name: string; data: ResidentialShareCardData }[] = [
 
 const SCALES = [0.3, 0.5, 1];
 
+// Phase 3 test: turns the card into a real PNG picture and lets you look at it and download it.
+function GenerateButton({ data }: { data: ResidentialShareCardData }) {
+  const [busy, setBusy] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [info, setInfo] = useState("");
+  const [error, setError] = useState("");
+
+  // Free the previous picture from memory whenever a new one replaces it (and when leaving the page).
+  useEffect(() => {
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+    };
+  }, [imageUrl]);
+
+  async function generate() {
+    setBusy(true);
+    setError("");
+    try {
+      const blob = await generateCardImage(data);
+      setInfo(`PNG, ${Math.round(blob.size / 1024)} KB`);
+      setImageUrl(URL.createObjectURL(blob));
+    } catch (err) {
+      console.error("[share card] could not create the picture:", err);
+      setError("We could not create the picture. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mt-3" style={{ maxWidth: 360 }}>
+      <button
+        type="button"
+        onClick={generate}
+        disabled={busy}
+        className="rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60"
+      >
+        {busy ? "Creating image..." : "Generate image"}
+      </button>
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {imageUrl && (
+        <div className="mt-3">
+          <img src={imageUrl} alt="Generated share card" className="w-full rounded-md border border-gray-300" />
+          <p className="mt-1 text-xs text-gray-500">{info}, 1080 × 1350</p>
+          <a
+            href={imageUrl}
+            download={shareCardFileName(data.title)}
+            className="mt-1 inline-block text-sm font-semibold text-green-700 underline"
+          >
+            Download PNG
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Shows the card for one REAL listing, loaded the same way the property details page loads it.
 function RealPropertyCard({ id, scale }: { id: string; scale: number }) {
   const { data, isLoading, error } = useGetSinglePropertyQuery(id);
@@ -115,6 +173,8 @@ function RealPropertyCard({ id, scale }: { id: string; scale: number }) {
     );
   }
 
+  const cardData = buildResidentialCardData(property);
+
   return (
     <div>
       <p className="text-sm font-semibold text-gray-700 mb-2" style={{ maxWidth: CARD_WIDTH * scale }}>
@@ -129,9 +189,10 @@ function RealPropertyCard({ id, scale }: { id: string; scale: number }) {
         }}
       >
         <div style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}>
-          <ResidentialShareCard data={buildResidentialCardData(property)} />
+          <ResidentialShareCard data={cardData} />
         </div>
       </div>
+      <GenerateButton data={cardData} />
     </div>
   );
 }
@@ -208,6 +269,7 @@ export default function CardPreviewPage() {
                   <ResidentialShareCard data={c.data} />
                 </div>
               </div>
+              <GenerateButton data={c.data} />
             </div>
           ))}
         </div>
