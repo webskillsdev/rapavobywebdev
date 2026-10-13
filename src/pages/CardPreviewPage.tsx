@@ -1,9 +1,9 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetSinglePropertyQuery } from "../api/propertyApi";
 import { extractIdFromSlug } from "../utils/slug";
 import { buildResidentialCardData, shareCardKindOf } from "../components/share-cards/buildShareCardData";
-import { generateCardImage, shareCardFileName } from "../components/share-cards/generateCardImage";
+import ShareToStatusModal from "../components/share-cards/ShareToStatusModal";
 import ResidentialShareCard, {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -98,59 +98,20 @@ const CASES: { name: string; data: ResidentialShareCardData }[] = [
 
 const SCALES = [0.3, 0.5, 1];
 
-// Phase 3 test: turns the card into a real PNG picture and lets you look at it and download it.
-function GenerateButton({ data }: { data: ResidentialShareCardData }) {
-  const [busy, setBusy] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [info, setInfo] = useState("");
-  const [error, setError] = useState("");
-
-  // Free the previous picture from memory whenever a new one replaces it (and when leaving the page).
-  useEffect(() => {
-    return () => {
-      if (imageUrl) URL.revokeObjectURL(imageUrl);
-    };
-  }, [imageUrl]);
-
-  async function generate() {
-    setBusy(true);
-    setError("");
-    try {
-      const blob = await generateCardImage(data);
-      setInfo(`PNG, ${Math.round(blob.size / 1024)} KB`);
-      setImageUrl(URL.createObjectURL(blob));
-    } catch (err) {
-      console.error("[share card] could not create the picture:", err);
-      setError("We could not create the picture. Please try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
+// Opens the real "Share to Status" window for this card.
+function ShareButton({ data }: { data: ResidentialShareCardData }) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="mt-3" style={{ maxWidth: 360 }}>
+    <div className="mt-3">
       <button
         type="button"
-        onClick={generate}
-        disabled={busy}
-        className="rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60"
+        onClick={() => setOpen(true)}
+        className="rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
       >
-        {busy ? "Creating image..." : "Generate image"}
+        Share to Status
       </button>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-      {imageUrl && (
-        <div className="mt-3">
-          <img src={imageUrl} alt="Generated share card" className="w-full rounded-md border border-gray-300" />
-          <p className="mt-1 text-xs text-gray-500">{info}, 1080 × 1350</p>
-          <a
-            href={imageUrl}
-            download={shareCardFileName(data.title)}
-            className="mt-1 inline-block text-sm font-semibold text-green-700 underline"
-          >
-            Download PNG
-          </a>
-        </div>
-      )}
+      {open && <ShareToStatusModal data={data} onClose={() => setOpen(false)} />}
     </div>
   );
 }
@@ -192,7 +153,7 @@ function RealPropertyCard({ id, scale }: { id: string; scale: number }) {
           <ResidentialShareCard data={cardData} />
         </div>
       </div>
-      <GenerateButton data={cardData} />
+      <ShareButton data={cardData} />
     </div>
   );
 }
@@ -269,7 +230,7 @@ export default function CardPreviewPage() {
                   <ResidentialShareCard data={c.data} />
                 </div>
               </div>
-              <GenerateButton data={c.data} />
+              <ShareButton data={c.data} />
             </div>
           ))}
         </div>
