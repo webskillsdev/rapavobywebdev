@@ -52,14 +52,12 @@ const CASES: { name: string; data: ResidentialShareCardData }[] = [
     },
   },
   {
-    name: "Very long title and very long location",
+    name: "Long title, location and agent name (shortened automatically)",
     data: {
-      title:
-        "Exquisitely finished and fully serviced 5 bedroom detached smart home with swimming pool, cinema room, boys quarters and 24 hour power in a gated estate",
+      title: "Exquisitely finished and fully serviced 5 bedroom detached smart home with swimming pool",
       listingType: "sale",
       price: 450000000,
-      location:
-        "Banana Island Road, Off Glover Road, Ikoyi, Eti-Osa Local Government Area, Lagos Island, Lagos State, Nigeria",
+      location: "Banana Island Road, Off Glover Road, Ikoyi, Eti-Osa, Lagos Island, Lagos",
       imageUrl: "/sample/house.jpg",
       photoCount: 24,
       bedrooms: 5,
@@ -69,7 +67,7 @@ const CASES: { name: string; data: ResidentialShareCardData }[] = [
       agentName: "Oluwaseun Adebayo-Christopherson Properties and Estates Limited",
       agentAvatarUrl: null,
       agentVerified: true,
-      shareUrl: `${BASE_URL}exquisitely-finished-and-fully-serviced-5-bedroom-detached-smart-home-0b6c1f52-8a3e-4c1d-9d2e-5f1a7c3b9e10`,
+      shareUrl: `${BASE_URL}exquisitely-finished-and-fully-serviced-5-bedroom-0b6c1f52-8a3e-4c1d-9d2e-5f1a7c3b9e10`,
     },
   },
   {

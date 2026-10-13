@@ -14,8 +14,7 @@ import type { CSSProperties, ReactNode } from "react";
 export const CARD_WIDTH = 1080;
 export const CARD_HEIGHT = 1350;
 
-const GREEN = "#97C736"; // official Rapavo green
-const GREEN_DARK = "#5E8F1A"; // deeper tone of the same green, for text on white (readability)
+const GREEN = "#15803D"; // the green used across the Rapavo app (buttons, prices, ticks)
 const INK = "#1E2433";
 const MUTED = "#6B7280";
 const FONT = `"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif`;
@@ -69,15 +68,23 @@ function displayUrl(url: string): string {
   return url.replace(/^https?:\/\//, "");
 }
 
-// Long titles get a slightly smaller font so they still fit in two lines.
-function titleSize(title: string): number {
-  if (title.length > 90) return 44;
-  if (title.length > 60) return 50;
-  return 58;
+// Keep the card short and clean: long text is cut at a word and ends with "...".
+const MAX_TITLE = 34;
+const MAX_LOCATION = 30;
+const MAX_AGENT = 24;
+
+function shorten(text: string, max: number): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  const base = lastSpace > max * 0.5 ? cut.slice(0, lastSpace) : cut;
+  return `${base.replace(/[\s,.\-–]+$/, "")}…`;
 }
+
 type Stat = { icon: ReactNode; value: string; label: string };
 
-const oneLine: CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
+const oneLine: CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", lineHeight: 1.35 };
 
 // ----- icons (simple line icons, no emoji) ----------------------------------
 
@@ -138,7 +145,7 @@ const LinkIcon = () => (
   </svg>
 );
 const OpenIcon = () => (
-  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={GREEN_DARK} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" />
   </svg>
 );
@@ -150,7 +157,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
   const price = priceText(data.price, data.listingType);
 
   // Only real values are shown. A missing or zero value hides that slot (never "0").
-   const stats: Stat[] = [];
+  const stats: Stat[] = [];
   if (data.bedrooms) {
     stats.push({ icon: <BedIcon />, value: String(data.bedrooms), label: data.bedrooms === 1 ? "Bedroom" : "Bedrooms" });
   }
@@ -164,7 +171,9 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
     stats.push({ icon: <SizeIcon />, value: `${Number(data.sqm).toLocaleString("en-NG")} sqm`, label: "Size" });
   }
 
-  const agentName = data.agentName?.trim() || "Rapavo Agent";
+  const agentName = shorten(data.agentName?.trim() || "Rapavo Agent", MAX_AGENT);
+  const title = shorten(data.title, MAX_TITLE);
+  const location = shorten(data.location ?? "", MAX_LOCATION);
 
   return (
     <div
@@ -235,7 +244,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "linear-gradient(135deg, #EEF5DC 0%, #D9E8B0 100%)",
+              background: "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)",
             }}
           >
             <img src="/rapavo-mark.png" alt="" style={{ height: 200, width: "auto", opacity: 0.35 }} />
@@ -313,7 +322,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
         <div style={{ position: "absolute", left: 252, right: 56, top: 8 }}>
           <div style={{ fontSize: 30, color: MUTED, lineHeight: 1.2 }}>Listed by</div>
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 2 }}>
-            <span style={{ ...oneLine, fontSize: 44, fontWeight: 800, lineHeight: 1.2, minWidth: 0 }}>{agentName}</span>
+            <span style={{ ...oneLine, fontSize: 44, fontWeight: 800, minWidth: 0 }}>{agentName}</span>
             {data.agentVerified && (
               <svg width="40" height="40" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="12" r="11" fill={GREEN} />
@@ -331,31 +340,38 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
       <div style={{ padding: "20px 56px 0", flexShrink: 0 }}>
         <div
           style={{
-            fontSize: titleSize(data.title),
+            ...oneLine,
+            fontSize: 56,
             fontWeight: 800,
-            lineHeight: 1.15,
+            lineHeight: 1.3,
             letterSpacing: -0.5,
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            wordBreak: "break-word",
           }}
         >
-          {data.title}
+          {title}
         </div>
 
-        {data.location && (
+        {location && (
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 14 }}>
             <span style={{ flexShrink: 0, display: "flex" }}>
               <PinIcon />
             </span>
-            <span style={{ ...oneLine, fontSize: 36, color: MUTED, minWidth: 0 }}>{data.location}</span>
+            <span style={{ ...oneLine, fontSize: 36, color: MUTED, minWidth: 0 }}>{location}</span>
           </div>
         )}
 
         {price && (
-          <div style={{ ...oneLine, marginTop: 10, fontSize: 56, fontWeight: 800, color: GREEN_DARK, letterSpacing: -0.5 }}>
+          <div
+            style={{
+              marginTop: 12,
+              paddingBottom: 6,
+              fontSize: price.length > 18 ? 50 : 60,
+              fontWeight: 800,
+              lineHeight: 1.3,
+              letterSpacing: -0.5,
+              color: GREEN,
+              whiteSpace: "nowrap",
+            }}
+          >
             {price}
           </div>
         )}
@@ -387,7 +403,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
               >
                 {s.icon}
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ ...oneLine, fontSize: 34, fontWeight: 800, lineHeight: 1.1 }}>{s.value}</div>
+                  <div style={{ ...oneLine, fontSize: 34, fontWeight: 800, lineHeight: 1.25 }}>{s.value}</div>
                   <div style={{ ...oneLine, fontSize: 24, color: MUTED, lineHeight: 1.3 }}>{s.label}</div>
                 </div>
               </div>
@@ -401,7 +417,8 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
         <div
           style={{
             position: "relative",
-            background: "#EAF3D2",
+            background: "#F0FDF4",
+            border: "2px solid #BBF7D0",
             borderRadius: 32,
             padding: "24px 36px 26px",
             overflow: "hidden",
@@ -426,7 +443,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
               display: "flex",
               alignItems: "center",
               gap: 20,
-              background: GREEN_DARK,
+              background: GREEN,
               borderRadius: 24,
               padding: "14px 14px 14px 30px",
             }}
