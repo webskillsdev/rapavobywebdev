@@ -6,6 +6,7 @@ import { useGetSinglePropertyQuery, useDeletePropertyMutation } from "../api/pro
 import { buildShareSlug } from "../utils/slug";
 import DashboardShell from "../components/Layout/DashboardShell";
 import AgentSidebar from "../components/Layout/AgentSidebar";
+import ShareToStatusButton from "../components/share-cards/ShareToStatusButton";
 
 const TABS = ["Overview", "Details", "Location", "Media"];
 const SOON_TABS = ["AI Content", "Documents"];
@@ -101,6 +102,10 @@ export default function ListingOverviewPage() {
               >
                 Share
               </button>
+              <ShareToStatusButton
+                propertyId={property.id}
+                className="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 disabled:opacity-60"
+              />
             </div>
           </div>
 

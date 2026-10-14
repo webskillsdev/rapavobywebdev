@@ -6,6 +6,7 @@ import { useGetMyPropertiesQuery, useDeletePropertyMutation } from "../api/prope
 import { buildShareSlug } from "../utils/slug";
 import DashboardShell from "../components/Layout/DashboardShell";
 import AgentSidebar from "../components/Layout/AgentSidebar";
+import ShareToStatusButton from "../components/share-cards/ShareToStatusButton";
 
 export default function MyListingsPage() {
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -187,6 +188,10 @@ export default function MyListingsPage() {
                   >
                     Share
                   </button>
+                  <ShareToStatusButton
+                    propertyId={property.id}
+                    className="text-xs font-medium border border-green-600 rounded px-2 py-1 text-green-700 hover:bg-green-50 disabled:opacity-60"
+                  />
                                    <Link
                     to={`/my-listings/${property.id}/edit`}
                     className="text-xs font-medium border border-gray-300 rounded px-2 py-1 text-gray-700 hover:bg-gray-50"
