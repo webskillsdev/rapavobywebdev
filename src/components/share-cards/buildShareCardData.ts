@@ -26,6 +26,27 @@ function cloudinary(url: string | null | undefined, transform: string): string |
   return url.replace("/upload/", `/upload/${transform}/`);
 }
 
+// "c_of_o" / "Certificate of Occupancy" -> "C of O"; anything else is tidied and kept short.
+function prettyDocument(raw: unknown): string | null {
+  const first = Array.isArray(raw) ? raw[0] : raw;
+  if (typeof first !== "string") return null;
+  const text = first.replace(/_/g, " ").replace(/\s+/g, " ").trim();
+  if (!text) return null;
+  const key = text.toLowerCase().replace(/[^a-z ]/g, "");
+  if (key === "c of o" || key === "certificate of occupancy") return "C of O";
+  const tidy = text.charAt(0).toUpperCase() + text.slice(1);
+  return tidy.length > 18 ? `${tidy.slice(0, 17).trim()}…` : tidy;
+}
+
+// The land size, if one was saved. The listing form does not collect it yet,
+// so this is usually empty. A saved "property_size" wins over "sqm".
+function landSizeText(property: any): string | null {
+  const size = positiveNumber(property?.property_size) ?? positiveNumber(property?.sqm);
+  if (size == null) return null;
+  const unit = positiveNumber(property?.property_size) != null ? property?.property_size_unit || "sqm" : "sqm";
+  return `${size.toLocaleString("en-NG")} ${unit}`;
+}
+
 export function buildResidentialCardData(
   property: any,
   origin: string = window.location.origin,
@@ -55,4 +76,26 @@ export function buildResidentialCardData(
     agentVerified: profile?.is_verified === true,
     shareUrl: `${origin}/share/${buildShareSlug(property?.title ?? "property", property?.id ?? "")}`,
   };
+}
+
+// Land uses the same card, with land facts instead of bedrooms and bathrooms.
+export function buildLandCardData(property: any, origin: string = window.location.origin): ResidentialShareCardData {
+  return {
+    ...buildResidentialCardData(property, origin),
+    kind: "land",
+    bedrooms: null,
+    bathrooms: null,
+    toilets: null,
+    sqm: null,
+    landSize: landSizeText(property),
+    documentTitle: prettyDocument(property?.document_status),
+    negotiable: property?.negotiable === true,
+  };
+}
+
+// One entry point for every listing: picks the right card.
+export function buildShareCardData(property: any, origin?: string): ResidentialShareCardData {
+  return shareCardKindOf(property) === "land"
+    ? buildLandCardData(property, origin)
+    : buildResidentialCardData(property, origin);
 }

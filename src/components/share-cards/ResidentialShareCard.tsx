@@ -4,6 +4,8 @@ import type { CSSProperties, ReactNode } from "react";
 // ResidentialShareCard
 //
 // A fixed 1080 x 1350 (4:5) Rapavo marketing card for a house / apartment.
+// The same card also draws LAND listings (kind: "land"): same layout, but the details row
+// shows land facts (size, title document, negotiable) instead of bedrooms and bathrooms.
 // It is a "dumb" component: it only draws what it is given. Nothing about any
 // property is written inside it, so the same card works for every listing.
 //
@@ -30,6 +32,11 @@ export type ResidentialShareCardData = {
   bathrooms?: number | null;
   toilets?: number | null;
   sqm?: number | null;
+  // Land only (kind: "land"). Each one is hidden when it is empty.
+  kind?: "residential" | "land";
+  landSize?: string | null; // already formatted, e.g. "600 sqm"
+  documentTitle?: string | null; // e.g. "C of O"
+  negotiable?: boolean;
   agentName: string | null;
   agentAvatarUrl: string | null;
   agentVerified: boolean;
@@ -45,7 +52,12 @@ function listingLabel(type: string): string {
   return type ? type.toUpperCase() : "";
 }
 
-function ctaLine(type: string): string {
+function ctaLine(type: string, kind?: "residential" | "land"): string {
+  if (kind === "land") {
+    if (type === "sale") return "Check out this land for sale on Rapavo";
+    if (type === "rent") return "Check out this land for rent on Rapavo";
+    return "Check out this land on Rapavo";
+  }
   if (type === "sale") return "Check out this property for sale on Rapavo";
   if (type === "rent") return "Check out this property for rent on Rapavo";
   if (type === "shortlet") return "Check out this shortlet on Rapavo";
@@ -130,6 +142,16 @@ const SizeIcon = () => (
     <rect x="8.5" y="8.5" width="7" height="7" rx="0.5" />
   </Icon>
 );
+const DocIcon = () => (
+  <Icon>
+    <path d="M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6" />
+  </Icon>
+);
+const TagIcon = () => (
+  <Icon>
+    <path d="M3 12V4h8l10 10-8 8zM7.5 8.5h.01" />
+  </Icon>
+);
 const PinIcon = () => (
   <svg width="38" height="38" viewBox="0 0 24 24" fill={GREEN} stroke="none">
     <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
@@ -161,16 +183,22 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
 
   // Only real values are shown. A missing or zero value hides that slot (never "0").
   const stats: Stat[] = [];
-  if (data.bedrooms) {
+  const isLand = data.kind === "land";
+  if (isLand) {
+    if (data.landSize) stats.push({ icon: <SizeIcon />, value: data.landSize, label: "Land size" });
+    if (data.documentTitle) stats.push({ icon: <DocIcon />, value: data.documentTitle, label: "Title" });
+    if (data.negotiable) stats.push({ icon: <TagIcon />, value: "Yes", label: "Negotiable" });
+  }
+  if (!isLand && data.bedrooms) {
     stats.push({ icon: <BedIcon />, value: String(data.bedrooms), label: data.bedrooms === 1 ? "Bedroom" : "Bedrooms" });
   }
-  if (data.bathrooms) {
+  if (!isLand && data.bathrooms) {
     stats.push({ icon: <BathIcon />, value: String(data.bathrooms), label: data.bathrooms === 1 ? "Bathroom" : "Bathrooms" });
   }
-  if (data.toilets) {
+  if (!isLand && data.toilets) {
     stats.push({ icon: <ToiletIcon />, value: String(data.toilets), label: data.toilets === 1 ? "Toilet" : "Toilets" });
   }
-  if (data.sqm) {
+  if (!isLand && data.sqm) {
     stats.push({ icon: <SizeIcon />, value: `${Number(data.sqm).toLocaleString("en-NG")} sqm`, label: "Size" });
   }
 
@@ -457,7 +485,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
             style={{ position: "absolute", right: 36, top: 14, height: 110, width: "auto", opacity: 0.32 }}
           />
           <div style={{ position: "relative", maxWidth: 780, fontSize: 34, fontWeight: 800, lineHeight: 1.25, whiteSpace: "nowrap" }}>
-            {ctaLine(data.listingType)}
+            {ctaLine(data.listingType, data.kind)}
           </div>
           <div style={{ position: "relative", marginTop: 6, fontSize: 26, color: MUTED }}>
             View photos, details and contact the agent directly.

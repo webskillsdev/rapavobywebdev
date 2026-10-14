@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useLazyGetSinglePropertyQuery } from "../../api/propertyApi";
 import type { ResidentialShareCardData } from "./ResidentialShareCard";
-import { buildResidentialCardData, shareCardKindOf } from "./buildShareCardData";
+import { buildShareCardData } from "./buildShareCardData";
 import ShareToStatusModal from "./ShareToStatusModal";
 
 // The "Share to Status" button for an agent's own listing.
 // It is separate from the normal "Share" button (which only copies the property link).
 //
 // On tap it loads the full listing (with the agent's profile), builds the card data,
-// and opens the Share to Status window. Land listings don't have a card yet.
+// and opens the Share to Status window.
 
 type Props = {
   propertyId: string;
@@ -42,11 +42,7 @@ export default function ShareToStatusButton({ propertyId, className = "", label 
       const property = result?.data;
       if (!property) throw new Error("Listing not found");
 
-      if (shareCardKindOf(property) === "land") {
-        showToast("Share to Status for land listings is coming soon.");
-        return;
-      }
-      setCardData(buildResidentialCardData(property));
+      setCardData(buildShareCardData(property));
     } catch (err) {
       console.error("[share to status] could not load the listing:", err);
       showToast("We couldn't load this listing. Please try again.");

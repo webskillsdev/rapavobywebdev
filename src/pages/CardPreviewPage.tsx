@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetSinglePropertyQuery } from "../api/propertyApi";
 import { extractIdFromSlug } from "../utils/slug";
-import { buildResidentialCardData, shareCardKindOf } from "../components/share-cards/buildShareCardData";
+import { buildShareCardData } from "../components/share-cards/buildShareCardData";
 import ShareToStatusModal from "../components/share-cards/ShareToStatusModal";
 import ResidentialShareCard, {
   CARD_HEIGHT,
@@ -76,6 +76,42 @@ const CASES: { name: string; data: ResidentialShareCardData }[] = [
     },
   },
   {
+    name: "Land (sale, C of O, negotiable, with size)",
+    data: {
+      title: "600sqm Dry Land in Ibeju-Lekki",
+      listingType: "sale",
+      price: 18000000,
+      location: "Ibeju-Lekki, Lagos",
+      imageUrl: "/sample/house.jpg",
+      photoCount: 4,
+      kind: "land",
+      landSize: "600 sqm",
+      documentTitle: "C of O",
+      negotiable: true,
+      agentName: "Lawrence Egbo",
+      agentAvatarUrl: "/sample/agent.jpg",
+      agentVerified: true,
+      shareUrl: `${BASE_URL}600sqm-dry-land-in-ibeju-lekki-0b6c1f52-8a3e-4c1d-9d2e-5f1a7c3b9e10`,
+    },
+  },
+  {
+    name: "Land (only a title document saved, as the form works today)",
+    data: {
+      title: "Plot of Land at Epe",
+      listingType: "sale",
+      price: 6500000,
+      location: "Epe, Lagos",
+      imageUrl: null,
+      photoCount: 1,
+      kind: "land",
+      documentTitle: "Deed of Assignment",
+      agentName: "Kate williams",
+      agentAvatarUrl: null,
+      agentVerified: false,
+      shareUrl: `${BASE_URL}plot-of-land-at-epe-1c9d2e5f-1a7c-4b9e-8a3e-0b6c1f528a3e`,
+    },
+  },
+  {
     name: "Missing values (no photo, no price, one photo, no stats)",
     data: {
       title: "Self-contain in Yaba",
@@ -126,15 +162,7 @@ function RealPropertyCard({ id, scale }: { id: string; scale: number }) {
     return <p className="text-sm text-red-600">We could not load that property. Check the id and try again.</p>;
   }
 
-  if (shareCardKindOf(property) === "land") {
-    return (
-      <p className="text-sm text-amber-700">
-        "{property.title}" is land. Land listings get their own card design in a later phase.
-      </p>
-    );
-  }
-
-  const cardData = buildResidentialCardData(property);
+  const cardData = buildShareCardData(property);
 
   return (
     <div>
