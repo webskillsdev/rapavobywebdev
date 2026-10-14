@@ -44,7 +44,7 @@ export function buildResidentialCardData(
     listingType: property?.listing_type ?? "",
     price: positiveNumber(property?.price),
     location: property?.location ?? "",
-    imageUrl: cloudinary(cover?.media_url, "w_1080,h_720,c_fill,g_auto"),
+    imageUrl: cloudinary(cover?.media_url, "w_1080,h_1350,c_limit"),
     photoCount: photos.length,
     bedrooms: positiveNumber(property?.bedrooms),
     bathrooms: positiveNumber(property?.bathrooms),

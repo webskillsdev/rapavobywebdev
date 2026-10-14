@@ -69,6 +69,9 @@ function displayUrl(url: string): string {
 }
 
 // Keep the card short and clean: long text is cut at a word and ends with "...".
+// Height of the white strip under the photo (the agent sits on it)
+const STRIP = 120;
+
 const MAX_TITLE = 34;
 const MAX_LOCATION = 30;
 const MAX_AGENT = 24;
@@ -190,49 +193,43 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
         boxSizing: "border-box",
       }}
     >
-      {/* Header: logo + listing type */}
-      <div
-        style={{
-          height: 150,
-          flexShrink: 0,
-          padding: "0 56px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <img src="/rapavo-mark.png" alt="" style={{ height: 104, width: "auto", display: "block" }} />
-          <img src="/rapavo-wordmark.png" alt="Rapavo" style={{ height: 96, width: "auto", display: "block" }} />
-        </div>
-        {label && (
-          <div
-            style={{
-              background: GREEN,
-              color: "#FFFFFF",
-              fontWeight: 800,
-              fontSize: 46,
-              letterSpacing: 1,
-              padding: "16px 44px",
-              borderRadius: 22,
-              lineHeight: 1,
-            }}
-          >
-            {label}
-          </div>
-        )}
-      </div>
-
       {/* Photo */}
-      <div style={{ position: "relative", flex: "1 1 0", minHeight: 280, background: "#E5E7EB", overflow: "hidden" }}>
+      <div style={{ position: "relative", flex: "1 1 0", minHeight: 360, background: "#E5E7EB", overflow: "hidden" }}>
         {data.imageUrl ? (
-          <img
-            src={data.imageUrl}
-            alt=""
-            crossOrigin="anonymous"
-            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
+          <>
+            {/* Soft blurred copy of the photo fills the sides, so the real photo can be shown in full */}
+            <img
+              src={data.imageUrl}
+              alt=""
+              crossOrigin="anonymous"
+              style={{
+                position: "absolute",
+                top: -40,
+                left: -40,
+                width: CARD_WIDTH + 80,
+                height: "calc(100% + 80px)",
+                objectFit: "cover",
+                display: "block",
+                filter: "blur(28px)",
+              }}
+            />
+            <div style={{ position: "absolute", inset: 0, background: "rgba(255,255,255,0.18)" }} />
+            {/* The photo itself: never cropped */}
+            <img
+              src={data.imageUrl}
+              alt=""
+              crossOrigin="anonymous"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `calc(100% - ${STRIP}px)`,
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+          </>
         ) : (
           <div
             style={{
@@ -251,12 +248,33 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
           </div>
         )}
 
+        {label && (
+          <div
+            style={{
+              position: "absolute",
+              top: 40,
+              right: 44,
+              background: GREEN,
+              color: "#FFFFFF",
+              fontWeight: 800,
+              fontSize: 44,
+              letterSpacing: 1,
+              padding: "16px 42px",
+              borderRadius: 22,
+              lineHeight: 1,
+              boxShadow: "0 6px 18px rgba(0,0,0,0.28)",
+            }}
+          >
+            {label}
+          </div>
+        )}
+
         {data.photoCount > 1 && (
           <div
             style={{
               position: "absolute",
               right: 40,
-              bottom: 28,
+              bottom: 26,
               display: "flex",
               alignItems: "center",
               gap: 12,
@@ -272,17 +290,26 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
             {data.photoCount} photos
           </div>
         )}
-      </div>
 
-      {/* Agent (avatar overlaps the photo, like the mockup) */}
-      <div style={{ position: "relative", height: 118, flexShrink: 0 }}>
+        {/* Agent (white curved cut-out at the bottom-left of the photo, like the mockup) */}
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            width: 800,
+            height: STRIP,
+            background: "#FFFFFF",
+            borderTopRightRadius: STRIP,
+          }}
+        />
         <div
           style={{
             position: "absolute",
             left: 48,
-            top: -84,
-            width: 176,
-            height: 176,
+            bottom: 6,
+            width: 150,
+            height: 150,
             borderRadius: "50%",
             border: `8px solid ${GREEN}`,
             background: "#FFFFFF",
@@ -310,7 +337,7 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
                 justifyContent: "center",
                 background: GREEN,
                 color: "#FFFFFF",
-                fontSize: 64,
+                fontSize: 56,
                 fontWeight: 800,
               }}
             >
@@ -318,30 +345,30 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
             </div>
           )}
         </div>
-
-        <div style={{ position: "absolute", left: 252, right: 56, top: 8 }}>
-          <div style={{ fontSize: 30, color: MUTED, lineHeight: 1.2 }}>Listed by</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 2 }}>
-            <span style={{ ...oneLine, fontSize: 44, fontWeight: 800, minWidth: 0 }}>{agentName}</span>
+        <div style={{ position: "absolute", left: 226, width: 520, bottom: 4 }}>
+          <div style={{ fontSize: 24, color: MUTED, lineHeight: 1.2 }}>Listed by</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 2 }}>
+            <span style={{ ...oneLine, fontSize: 38, fontWeight: 800, minWidth: 0 }}>{agentName}</span>
             {data.agentVerified && (
-              <svg width="40" height="40" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+              <svg width="34" height="34" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="12" r="11" fill={GREEN} />
                 <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             )}
           </div>
-          <div style={{ fontSize: 28, color: MUTED, lineHeight: 1.3 }}>
+          <div style={{ fontSize: 22, color: MUTED, lineHeight: 1.3 }}>
             {data.agentVerified ? "Verified Agent on Rapavo" : "Agent on Rapavo"}
           </div>
         </div>
       </div>
+
 
       {/* Title, location, price */}
       <div style={{ padding: "20px 56px 0", flexShrink: 0 }}>
         <div
           style={{
             ...oneLine,
-            fontSize: 56,
+            fontSize: 50,
             fontWeight: 800,
             lineHeight: 1.3,
             letterSpacing: -0.5,
@@ -351,20 +378,20 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
         </div>
 
         {location && (
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 6 }}>
             <span style={{ flexShrink: 0, display: "flex" }}>
               <PinIcon />
             </span>
-            <span style={{ ...oneLine, fontSize: 36, color: MUTED, minWidth: 0 }}>{location}</span>
+            <span style={{ ...oneLine, fontSize: 32, color: MUTED, minWidth: 0 }}>{location}</span>
           </div>
         )}
 
         {price && (
           <div
             style={{
-              marginTop: 12,
-              paddingBottom: 6,
-              fontSize: price.length > 18 ? 50 : 60,
+              marginTop: 6,
+              paddingBottom: 4,
+              fontSize: price.length > 18 ? 44 : 54,
               fontWeight: 800,
               lineHeight: 1.3,
               letterSpacing: -0.5,
@@ -379,13 +406,13 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
 
       {/* Stats */}
       {stats.length > 0 && (
-        <div style={{ padding: "22px 48px 0", flexShrink: 0 }}>
+        <div style={{ padding: "14px 48px 0", flexShrink: 0 }}>
           <div
             style={{
               display: "flex",
               background: "#F4F5F7",
               borderRadius: 26,
-              padding: "20px 0",
+              padding: "14px 0",
             }}
           >
             {stats.map((s, i) => (
@@ -413,39 +440,39 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
       )}
 
       {/* Call to action + link (pinned to the bottom) */}
-      <div style={{ padding: "26px 48px 40px", flexShrink: 0 }}>
+      <div style={{ padding: "16px 48px 28px", flexShrink: 0 }}>
         <div
           style={{
             position: "relative",
             background: "#F0FDF4",
             border: "2px solid #BBF7D0",
             borderRadius: 32,
-            padding: "24px 36px 26px",
+            padding: "16px 36px 18px",
             overflow: "hidden",
           }}
         >
           <img
             src="/rapavo-mark.png"
             alt=""
-            style={{ position: "absolute", right: 36, top: 20, height: 140, width: "auto", opacity: 0.32 }}
+            style={{ position: "absolute", right: 36, top: 14, height: 110, width: "auto", opacity: 0.32 }}
           />
-          <div style={{ position: "relative", maxWidth: 720, fontSize: 38, fontWeight: 800, lineHeight: 1.15 }}>
+          <div style={{ position: "relative", maxWidth: 780, fontSize: 34, fontWeight: 800, lineHeight: 1.25, whiteSpace: "nowrap" }}>
             {ctaLine(data.listingType)}
           </div>
-          <div style={{ position: "relative", marginTop: 10, fontSize: 28, color: MUTED }}>
+          <div style={{ position: "relative", marginTop: 6, fontSize: 26, color: MUTED }}>
             View photos, details and contact the agent directly.
           </div>
 
           <div
             style={{
               position: "relative",
-              marginTop: 18,
+              marginTop: 12,
               display: "flex",
               alignItems: "center",
               gap: 20,
               background: GREEN,
               borderRadius: 24,
-              padding: "14px 14px 14px 30px",
+              padding: "10px 10px 10px 28px",
             }}
           >
             <span style={{ flexShrink: 0, display: "flex" }}>
@@ -457,8 +484,8 @@ export default function ResidentialShareCard({ data }: { data: ResidentialShareC
             <span
               style={{
                 flexShrink: 0,
-                width: 72,
-                height: 72,
+                width: 64,
+                height: 64,
                 borderRadius: 18,
                 background: "#FFFFFF",
                 display: "flex",
