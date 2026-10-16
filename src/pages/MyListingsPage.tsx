@@ -3,16 +3,16 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { RootState } from "../store";
 import { useGetMyPropertiesQuery, useDeletePropertyMutation } from "../api/propertyApi";
-import { buildShareSlug } from "../utils/slug";
 import DashboardShell from "../components/Layout/DashboardShell";
 import AgentSidebar from "../components/Layout/AgentSidebar";
-import ShareToStatusButton from "../components/share-cards/ShareToStatusButton";
+import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
 
 export default function MyListingsPage() {
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const [search, setSearch] = useState("");
   const [activeStatus, setActiveStatus] = useState("all");
   const [deleteProperty] = useDeletePropertyMutation();
+  const [sharing, setSharing] = useState<any>(null);
 
   const { data, isLoading, error } = useGetMyPropertiesQuery(undefined, {
     skip: !isAuthenticated,
@@ -52,12 +52,6 @@ export default function MyListingsPage() {
 
   const totalViews = listings.reduce((sum, p) => sum + (p.views_count ?? 0), 0);
   const totalSaves = listings.reduce((sum, p) => sum + (p.favorite_count ?? 0), 0);
-
-    async function handleShare(id: string, title: string) {
-    const url = `${window.location.origin}/share/${buildShareSlug(title, id)}`;
-    await navigator.clipboard.writeText(url);
-    alert("Share link copied to clipboard!");
-  }
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
@@ -183,15 +177,11 @@ export default function MyListingsPage() {
                   </Link>
                   <button
                     type="button"
-                  onClick={() => handleShare(property.id, property.title)}
+                  onClick={() => setSharing(property)}
                     className="text-xs font-medium border border-gray-300 rounded px-2 py-1 text-gray-700 hover:bg-gray-50"
                   >
                     Share
                   </button>
-                  <ShareToStatusButton
-                    propertyId={property.id}
-                    className="text-xs font-medium border border-green-600 rounded px-2 py-1 text-green-700 hover:bg-green-50 disabled:opacity-60"
-                  />
                                    <Link
                     to={`/my-listings/${property.id}/edit`}
                     className="text-xs font-medium border border-gray-300 rounded px-2 py-1 text-gray-700 hover:bg-gray-50"
@@ -211,6 +201,7 @@ export default function MyListingsPage() {
           ))}
         </div>
       </div>
+      {sharing && <SharePropertySheet property={sharing} onClose={() => setSharing(null)} />}
     </DashboardShell>
   );
 }

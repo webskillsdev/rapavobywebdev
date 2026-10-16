@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDeletePropertyMutation } from "../../api/propertyApi";
-import { buildShareSlug } from "../../utils/slug";
+import SharePropertySheet from "../share-sheet/SharePropertySheet";
 
 function badgeFor(listingType?: string): { label: string; color: string } {
   if (listingType === "rent") return { label: "FOR RENT", color: "bg-purple-600" };
@@ -17,6 +17,7 @@ function ListingCard({
   onDelete: (id: string, title: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const media: any[] = property.property_media ?? [];
   const photos = media.filter((m) => m.media_type !== "video");
@@ -34,11 +35,9 @@ function ListingCard({
 
   const detailsPath = `/my-listings/${property.id}`;
 
-  async function handleShare() {
+  function handleShare() {
     setMenuOpen(false);
-    const url = `${window.location.origin}/share/${buildShareSlug(property.title, property.id)}`;
-    await navigator.clipboard.writeText(url);
-    alert("Share link copied to clipboard!");
+    setShareOpen(true);
   }
 
   return (
@@ -138,6 +137,7 @@ function ListingCard({
           </div>
         </div>
       </div>
+      {shareOpen && <SharePropertySheet property={property} onClose={() => setShareOpen(false)} />}
     </div>
   );
 }

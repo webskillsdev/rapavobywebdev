@@ -10,6 +10,7 @@ import AgentSidebar from "../components/Layout/AgentSidebar";
 import { ExploreSkeletonGrid } from "../components/Explore/ExploreStates";
 import { buildShareSlug } from "../utils/slug";
 import { withNext } from "../utils/redirect";
+import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
 
 const PAGE_SIZE = 9;
 const TIP_KEY = "rapavo_saved_tip_dismissed";
@@ -111,6 +112,7 @@ function SavedCard({
   onUnsave: (id: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const category = categoryOf(property);
   const href = `/property/${buildShareSlug(property.title ?? "property", property.id)}`;
   const image: string | null = property.primary_media ?? property.media_urls?.[0] ?? null;
@@ -118,23 +120,9 @@ function SavedCard({
   const amenities: string[] = Array.isArray(property.amenities) ? property.amenities.slice(0, 3) : [];
   const isList = layout === "list";
 
-  async function handleShare() {
+  function handleShare() {
     setMenuOpen(false);
-    const url = `${window.location.origin}${href}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: property.title, url });
-      } catch {
-        // cancelled — not an error worth reporting
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(url);
-        alert("Link copied to clipboard!");
-      } catch {
-        alert(url);
-      }
-    }
+    setShareOpen(true);
   }
 
   return (
@@ -307,6 +295,7 @@ function SavedCard({
           </div>
         )}
       </div>
+      {shareOpen && <SharePropertySheet property={property} onClose={() => setShareOpen(false)} />}
     </article>
   );
 }

@@ -6,7 +6,7 @@ import { useGetSinglePropertyQuery, useDeletePropertyMutation } from "../api/pro
 import { buildShareSlug } from "../utils/slug";
 import DashboardShell from "../components/Layout/DashboardShell";
 import AgentSidebar from "../components/Layout/AgentSidebar";
-import ShareToStatusButton from "../components/share-cards/ShareToStatusButton";
+import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
 
 const TABS = ["Overview", "Details", "Location", "Media"];
 const SOON_TABS = ["AI Content", "Documents"];
@@ -18,6 +18,7 @@ export default function ListingOverviewPage() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [activeImage, setActiveImage] = useState(0);
   const [deleteProperty] = useDeletePropertyMutation();
+  const [shareOpen, setShareOpen] = useState(false);
 
   const { data, isLoading, error } = useGetSinglePropertyQuery(id as string, {
     skip: !isAuthenticated,
@@ -47,12 +48,6 @@ export default function ListingOverviewPage() {
     });
   const thumbs = images.filter((_: any, i: number) => i !== activeImage).slice(0, 6);
   const extraCount = images.length - 1 - thumbs.length;
-   async function handleShare() {
-    const url = `${window.location.origin}/share/${buildShareSlug(property.title, property.id)}`;
-    await navigator.clipboard.writeText(url);
-    alert("Share link copied to clipboard!");
-  }
-
   async function handleDelete() {
     if (!window.confirm(`Delete "${property.title}"? This can't be undone.`)) return;
     await deleteProperty(property.id);
@@ -97,15 +92,11 @@ export default function ListingOverviewPage() {
               </Link>
               <button
                 type="button"
-                onClick={handleShare}
+                onClick={() => setShareOpen(true)}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Share
               </button>
-              <ShareToStatusButton
-                propertyId={property.id}
-                className="rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 disabled:opacity-60"
-              />
             </div>
           </div>
 
@@ -479,6 +470,7 @@ export default function ListingOverviewPage() {
           </div>
         </div>
       </div>
+      {shareOpen && <SharePropertySheet property={property} onClose={() => setShareOpen(false)} />}
     </DashboardShell>
   );
 }

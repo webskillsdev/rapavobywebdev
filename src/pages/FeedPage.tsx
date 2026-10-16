@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useGetFeedsQuery, useGetMatchingPropertiesForMyRequestsQuery } from "../api/propertyApi";
 import { useSaveProperty } from "../hooks/useSaveProperty";
 import promoCard from "../assets/list-property-promo.jpg";
+import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
 const TABS = [
   { label: "For You", filter: {} },
   { label: "For Sale", filter: { listingType: "sale" } },
@@ -23,6 +24,7 @@ function timeAgo(dateString?: string): string {
 
 export default function FeedPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [sharing, setSharing] = useState<any>(null);
 
   const { data, isLoading, error } = useGetFeedsQuery({
     page: 1,
@@ -36,23 +38,10 @@ export default function FeedPage() {
   const { data: matchesData } = useGetMatchingPropertiesForMyRequestsQuery();
   const matches = matchesData?.data ?? [];
 
-  async function handleShare(id: string) {
-    const url = `${window.location.origin}/property/${id}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ url });
-      } catch {
-        // cancelled — not an error worth reporting
-      }
-    } else {
-      await navigator.clipboard.writeText(url);
-      alert("Link copied to clipboard!");
-    }
-  }
-
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 flex gap-6">
       {savePrompt}
+      {sharing && <SharePropertySheet property={sharing} onClose={() => setSharing(null)} />}
       <div className="max-w-2xl flex-1 min-w-0">
       <h1 className="text-2xl font-bold text-gray-900 mb-4">Feed</h1>
 
@@ -135,7 +124,7 @@ export default function FeedPage() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleShare(item.id)}
+                  onClick={() => setSharing(item)}
                   className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
