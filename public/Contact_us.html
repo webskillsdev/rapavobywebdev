@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Rapavo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+
+                        brandGreen: {
+                            DEFAULT: '#3B991F',
+                            dark: '#2E7A16',
+                            light: '#EAF5E8',
+                            surface: '#F4FAF3'
+                        },
+
+                        'rapavo-green': '#519C1D',
+                        'rapavo-dark': '#0B1313',
+                        'rapavo-input': '#131C1C',
+                        'rapavo-text': '#5A6565',
+
+                        brand: {
+                            light: '#eef7ec',
+                            DEFAULT: '#236c06',
+                            dark: '#164504',
+                            heading: '#111827',
+                            body: '#4b5563'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-brand-body antialiased">
+
+   <header class="fixed top-0 left-0 w-full mx-auto px-6 py-6 flex items-center justify-between z-50 bg-white">
+    <a href="/" class="flex items-center space-x-2 ml-10">
+        <img src="logo.png" alt="Rapavo - The Smarter Way to Property" class="h-16 w-auto">
+    </a>
+
+    <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold">
+      <a href="/" class="text-rapavo-text hover:text-rapavo-dark transition">Home</a>
+      <a href="about_us.html" class="text-rapavo-text hover:text-rapavo-dark transition">About Us</a>
+    <a href="how_it_works.html" class="text-rapavo-text hover:text-rapavo-dark transition">How It Works</a>
+      <a href="Contact_us.html" class="text-rapavo-dark hover:text-rapavo-dark transition pb-1 border-b-2  border-rapavo-green text-rapavo-green ">Contact Us</a>
+    </nav>
+
+    <div class="hidden md:block">
+        <button
+            class="open-waitlist-btn bg-brandGreen text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brandGreen-dark transition flex items-center gap-2">
+            Sign Up <span class="text-sm">→</span>
+        </button>
+    </div>
+
+    <button id="menu-btn" class="md:hidden text-rapavo-dark focus:outline-none z-50 p-2">
+      <svg id="hamburger-icon" class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"></path>
+      </svg>
+    </button>
+
+    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white shadow-xl border-b border-gray-100 p-6 flex flex-col space-y-4 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 md:hidden z-40">
+      <nav class="flex flex-col space-y-4 text-base font-semibold">
+        <a href="/" class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition">Home</a>
+        <a href="about_us.html" class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition">About Us</a>
+        <a href="how_it_works.html" class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition">How It Works</a>
+        <a href="Contact_us.html" class="text-rapavo-dark bg-gray-50 px-4 py-2.5 rounded-xl border-l-4 border-rapavo-green">Contact Us</a>
+      </nav>
+      <a href="#" class=" open-waitlist-btn bg-rapavo-green text-white px-5 py-3.5 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2 hover:bg-opacity-90 transition shadow-sm w-full">
+        Sign Up 
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+      </a>
+    </div>
+  </header>
+
+    <section class="max-w-7xl mx-auto mt-20 px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-6 space-y-6">
+                <span class="bg-brand-light text-brand text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-md">
+                    Get In Touch
+                </span>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-brand-heading leading-tight">
+                    We're Here to<br><span class="text-brand">Help You Succeed</span>
+                </h1>
+                <p class="text-gray-600 text-base max-w-lg leading-relaxed">
+                    Have questions, need support, or want to partner with Rapavo? Our team is ready to hear from you. 
+                </p>
+                <p class="text-gray-600 text-base max-w-lg leading-relaxed">
+                    Reach out to us today and let's build something great together.
+                </p>
+                
+
+                <!-- <div class="pt-6 flex flex-col sm:flex-row gap-6 sm:gap-12">
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 bg-brand-light text-brand rounded-full">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <a href="tel:+1234800000" class="text-brand-heading font-bold text-sm block hover:underline">+1 (234) 800-0000</a>
+                            <span class="text-xs text-gray-400">Mon - Fri, 9am - 5pm</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 bg-brand-light text-brand rounded-full">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <a href="mailto:hello@rapavo.com" class="text-brand-heading font-bold text-sm block hover:underline">info@rapavo.com</a>
+                            <span class="text-xs text-gray-400">We reply within 24 hours</span>
+                        </div>
+                        
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="lg:col-span-6 relative w-full h-[350px] sm:h-[450px] rounded-2xl overflow-hidden shadow-xl">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80" 
+                     alt="Modern Luxury Building Architecture" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent opacity-40 lg:opacity-60"></div>
+                <div class="absolute bottom-6 right-6 bg-white/90 backdrop-blur p-4 rounded-xl shadow-lg border border-white/40 hidden sm:flex items-center gap-3">
+                    <div class="w-2 h-8 bg-brand rounded"></div>
+                    <div>
+                        <p class="text-xs font-bold text-black uppercase tracking-wider">Rapavo HQ</p>
+                        <p class="text-[11px] text-gray-500">Premium Real Estate Solutions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            
+            <div class="bg-white border border-gray-100 p-8 rounded-2xl shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-brand-heading">Send Us a Message</h2>
+                    <p class="text-sm text-gray-500 mt-1">Fill out the form and a member of our team will get back to you shortly.</p>
+                </div>
+
+                <form class="space-y-4" id="contact-form">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <input type="text" id="contact_full_name" placeholder="Full Name"
+                                class="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brand text-sm text-black">
+                        </div>
+                        <div>
+                            <input type="email" id="contact_email" placeholder="Email Address"
+                                class="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brand text-sm text-black">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <input type="tel" id="contact_phone" placeholder="Phone Number"
+                                class="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brand text-sm text-black">
+                        </div>
+                        <div>
+                            <input type="text" id="contact_subject" placeholder="Subject"
+                                class="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brand text-sm text-black">
+                        </div>
+                    </div>
+                    <div>
+                        <textarea rows="5" id="contact_message" placeholder="Message"
+                            class="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brand text-sm text-black resize-none"></textarea>
+                    </div>
+                
+                    <!-- <div class="flex items-center gap-2 pt-1">
+                        <input type="checkbox" id="privacy" class="rounded border-gray-300 text-brand focus:ring-brand w-4 h-4">
+                        <label for="privacy" class="text-xs text-gray-500">I agree to the <a href="#"
+                                class="text-brand font-medium hover:underline">Privacy Policy</a></label>
+                    </div> -->
+                
+                    <button type="submit"
+                        class="w-full bg-brand hover:bg-brand-dark text-white font-semibold py-3.5 px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-md shadow-brand/10">
+                        Send Message <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white border border-gray-100 p-8 rounded-2xl shadow-sm space-y-6 h-full flex flex-col justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-brand-heading">Other Ways to Reach Us</h2>
+                    <p class="text-sm text-gray-500 mt-1">Choose the option that works best for you.</p>
+                </div>
+
+                <div class="space-y-4 flex-grow mt-6">
+                    <div class="flex items-start gap-4 p-5 rounded-xl border border-gray-100 hover:border-gray-200 transition bg-slate-50/50">
+                        <div class="p-3 bg-brand-light text-brand rounded-xl">
+                            <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+                                fill="currentColor" viewBox="0 0 24 24" >
+                                <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+                                <path d="M12 2C6.49 2 2 6.49 2 12v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1H4.07C4.56 7.06 7.93 4 12 4s7.44 3.06 7.93 7H18c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h2v1c0 .55-.45 1-1 1h-4c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h9c1.65 0 3-1.35 3-3v-7c0-5.51-4.49-10-10-10"></path>
+                                </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-sm text-brand-heading">Customer Support</h3>
+                            <p class="text-xs text-gray-500 leading-relaxed">For help with your account, listings or general inquiries.</p>
+                            <a href="mailto:support@rapavo.com" class="text-xs font-bold text-brand block pt-1 hover:underline">info@rapavo.com</a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-5 rounded-xl border border-gray-100 hover:border-gray-200 transition bg-slate-50/50">
+                        <div class="p-3 bg-brand-light text-brand rounded-xl">
+                            <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+                                fill="currentColor" viewBox="0 0 24 24" >
+                                <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+                                <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5m0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3M4 22h16c.55 0 1-.45 1-1v-1c0-3.86-3.14-7-7-7h-4c-3.86 0-7 3.14-7 7v1c0 .55.45 1 1 1m6-7h4c2.76 0 5 2.24 5 5H5c0-2.76 2.24-5 5-5"></path>
+                                </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-sm text-brand-heading">Partnerships</h3>
+                            <p class="text-xs text-gray-500 leading-relaxed">Interested in working with us? Let's create opportunities together.</p>
+                            <a href="mailto:partnerships@rapavo.com" class="text-xs font-bold text-brand block pt-1 hover:underline">partnerships@rapavo.com</a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-5 rounded-xl border border-gray-100 hover:border-gray-200 transition bg-slate-50/50">
+                        <div class="p-3 bg-brand-light text-brand rounded-xl">
+                            <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+                                fill="currentColor" viewBox="0 0 24 24" >
+                                <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+                                <path d="M20 6h-4V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v17c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V8c0-1.1-.9-2-2-2m0 14H4V4h10v3c0 .55.45 1 1 1h5z"></path><path d="M10 6h2v2h-2zM6 6h2v2H6zm0 4h2v2H6zm4 0h2v2h-2zm6 0h2v2h-2zm-6 4h2v2h-2zm-4 0h2v2H6zm10 0h2v2h-2z"></path>
+                                </svg>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-sm text-brand-heading">Business Inquiries</h3>
+                            <p class="text-xs text-gray-500 leading-relaxed">For media, investors or business related inquiries.</p>
+                            <a href="mailto:business@rapavo.com" class="text-xs font-bold text-brand block pt-1 hover:underline">business@rapavo.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div class="bg-white border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-5 space-y-6">
+                    <h2 class="text-2xl font-bold text-brand-heading">Visit Our Office</h2>
+                    
+                    <div class="space-y-5">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-brand shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-sm text-brand-heading">Rapavo HQ</h4>
+                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                                    32 Audu Epega Street, Lekki Phase,<br>Lagos, Nigeria.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="clock" class="w-5 h-5 text-brand shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-sm text-brand-heading">Office Hours</h4>
+                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                                    Monday - Friday: 9:00 AM - 5:00 PM<br>
+                                    Saturday: 10:00 AM - 2:00 PM
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 relative h-64 sm:h-80 bg-slate-100 rounded-xl overflow-hidden border border-gray-200">
+                <!-- Embedded Interactive Google Map -->
+                <!-- <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15858.971556052737!2d3.424391655419922!3d6.427045100000011!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf53280e49569%3A0xf0cd755f9bf5020!2sVictoria%20Island%2C%20Lagos!5e0!3m2!1sen!2sng!4v1718436000000!5m2!1sen!2sng" 
+                    class="w-full h-full border-0 grayscale contrast-[1.1] brightness-[1.02] opacity-95" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe> -->
+
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31716.49831332488!2d3.432047465455698!3d6.4501970706973655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf452da3bd44b%3A0x47331fb41adc9d28!2sLekki%20Phase%201%2C%20Lekki%20106104%2C%20Lagos!5e0!3m2!1sen!2sng!4v1782054584384!5m2!1sen!2sng"
+                    class="w-full h-full border-0 grayscale contrast-[1.1] brightness-[1.02] opacity-95" 
+                    width="600" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+
+                <!-- Floating UI Badge over the live map to retain the premium screenshot design look -->
+                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-2 rounded-lg shadow-md border border-white/20 hidden sm:flex items-center gap-2 pointer-events-none">
+                    <div class="w-1.5 h-1.5 rounded-full bg-brand animate-ping"></div>
+                    <span class="text-[10px] font-bold text-black uppercase tracking-wider">Live View</span>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="bg-gradient-to-br from-[#0c2e03] to-[#164504] rounded-2xl p-8 sm:p-12 text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="space-y-3">
+                    <div class="w-10 h-1 bg-brand rounded"></div>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Let's Build the Future of Property Together</h2>
+                    <p class="text-sm text-gray-300 max-w-xl">Whether you're a buyer, seller, agent, investor, or partner, we'd love to hear from you.</p>
+                </div>
+                <a href="#" class="open-waitlist-btn bg-brand hover:bg-brand-dark text-white font-semibold px-6 py-3.5 rounded-xl text-sm flex items-center gap-2 transition whitespace-nowrap border border-brand-light/20 shadow-lg">
+                    Sign Up <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <div id="waitlist-modal"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 invisible opacity-0 transition-all duration-300 ease-out">
+        <div id="modal-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    
+        <div id="modal-content"
+            class="bg-rapavo-dark text-white rounded-2xl w-full max-w-lg p-6 md:p-8 border border-gray-800 shadow-2xl relative z-10 transform scale-95 transition-transform duration-300 ease-out">
+    
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white transition p-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+    
+            <div class="mb-6 text-center">
+                <h3 class="text-xl font-extrabold tracking-tight text-white">
+                    Join the <span class="text-rapavo-green">Rapavo</span> Waitlist
+                </h3>
+                <p class="text-xs text-rapavo-text mt-1">Get early access to the smarter property marketplace.</p>
+            </div>
+    
+            <form class="space-y-4" id="waitlist-form">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="text" id="full_name" placeholder="Full Name"
+                        class="bg-rapavo-input text-white p-4 rounded-xl border border-gray-800 w-full focus:ring-1 focus:ring-rapavo-green focus:border-rapavo-green outline-none text-sm placeholder-gray-500">
+                    <input type="email" id="email" placeholder="Email Address"
+                        class="bg-rapavo-input text-white p-4 rounded-xl border border-gray-800 w-full focus:ring-1 focus:ring-rapavo-green focus:border-rapavo-green outline-none text-sm placeholder-gray-500">
+                </div>
+    
+                <div class="grid grid-cols-[100px,1fr] gap-4 items-center">
+                    <div
+                        class="bg-rapavo-input p-4 rounded-xl border border-gray-800 flex items-center justify-between text-sm text-gray-300 cursor-pointer">
+                        <div class="flex items-center gap-2">
+                            <img src="https://flagcdn.com/w20/ng.png" alt="Nigeria" class="w-5 h-auto rounded-sm">
+                            <span>+234</span>
+                        </div>
+                        <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" stroke-width="2.5"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <input type="tel" id="phone_number" placeholder="Phone Number"
+                        class="bg-rapavo-input text-white p-4 rounded-xl border border-gray-800 w-full focus:ring-1 focus:ring-rapavo-green focus:border-rapavo-green outline-none text-sm placeholder-gray-500">
+                </div>
+    
+                <div class="relative">
+                    <select id="user_type"
+                        class="bg-rapavo-input text-gray-400 p-4 rounded-xl border border-gray-800 w-full focus:ring-1 focus:ring-rapavo-green focus:border-rapavo-green outline-none text-sm appearance-none cursor-pointer">
+                        <option value="" disabled selected>I am a...</option>
+                        <option>Buyer</option>
+                        <option>Agent</option>
+                        <option>Property Owner</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+    
+                <button type="submit"
+                    class=" bg-rapavo-green text-white p-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-opacity-90 transition w-full shadow-md">
+                    Sign Up
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+    
+                <p class="text-xs text-gray-500 text-center flex items-center justify-center gap-2 pt-2">
+                    <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                        </path>
+                    </svg>
+                    We respect your privacy. No spam, ever.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-rapavo-dark text-gray-500 text-xs py-16">
+        <div class="container mx-auto px-6 max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-10">
+                <div class="sm:col-span-2 md:col-span-2 space-y-4">
+                    <a href="/" class="flex items-center space-x-2">
+                        <img src="Flogo.png" alt="Rapavo - The Smarter Way to Property" class="h-24 w-auto">
+                    </a>
+                    <div class="flex items-center gap-4 text-gray-500 ml-4">
+                        <a href="https://youtube.com/@rapavoapp-b3j" target="_blank">
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <!-- License: MIT. Made by teenyicons: https://github.com/teenyicons/teenyicons -->
+                            <svg width="16px" height="16px" viewBox="0 0 15 15" fill="#D3D3D3" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M1.61087 12.738L1.5061 13.2269H1.5061L1.61087 12.738ZM13.3891 12.738L13.4939 13.2269L13.3891 12.738ZM13.3891 2.26196L13.4939 1.77306V1.77306L13.3891 2.26196ZM1.61087 2.26196L1.71563 2.75086L1.61087 2.26196ZM6.5 5.5L6.77735 5.08398C6.62392 4.98169 6.42665 4.97215 6.26407 5.05916C6.10149 5.14617 6 5.3156 6 5.5H6.5ZM6.5 9.5H6C6 9.6844 6.10149 9.85383 6.26407 9.94084C6.42665 10.0278 6.62392 10.0183 6.77735 9.91603L6.5 9.5ZM9.5 7.5L9.77735 7.91603C9.91645 7.82329 10 7.66718 10 7.5C10 7.33282 9.91645 7.17671 9.77735 7.08398L9.5 7.5ZM0 3.63609V11.3639H1V3.63609H0ZM15 11.3639V3.63609H14V11.3639H15ZM1.5061 13.2269C5.45719 14.0736 9.54281 14.0736 13.4939 13.2269L13.2844 12.2491C9.4714 13.0662 5.5286 13.0662 1.71563 12.2491L1.5061 13.2269ZM13.4939 1.77306C9.54281 0.926396 5.45719 0.926396 1.5061 1.77306L1.71563 2.75086C5.5286 1.9338 9.4714 1.9338 13.2844 2.75086L13.4939 1.77306ZM15 3.63609C15 2.73766 14.3724 1.9613 13.4939 1.77306L13.2844 2.75086C13.7018 2.84031 14 3.20919 14 3.63609H15ZM14 11.3639C14 11.7908 13.7018 12.1597 13.2844 12.2491L13.4939 13.2269C14.3724 13.0387 15 12.2623 15 11.3639H14ZM0 11.3639C0 12.2623 0.627614 13.0387 1.5061 13.2269L1.71563 12.2491C1.29821 12.1597 1 11.7908 1 11.3639H0ZM1 3.63609C1 3.20919 1.29821 2.84031 1.71563 2.75086L1.5061 1.77306C0.627614 1.9613 0 2.73766 0 3.63609H1ZM6 5.5V9.5H7V5.5H6ZM6.77735 9.91603L9.77735 7.91603L9.22265 7.08398L6.22265 9.08398L6.77735 9.91603ZM9.77735 7.08398L6.77735 5.08398L6.22265 5.91603L9.22265 7.91603L9.77735 7.08398Z"
+                                    fill="#D3D3D3" />
+                            </svg>
+                        </a>
+                
+                        <a href="https://www.facebook.com/profile.php?id=61590841934114" target="_blank"
+                            class="hover:text-white transition"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.876h2.773l-.443 2.89h-2.33v6.989C18.343 21.128 22 16.991 22 12z" />
+                            </svg></a>
+                        <a href="https://www.instagram.com/rapavoapp?igsh=MW9lejI1a29rZ3Ztag==" target="_blank"
+                            class="hover:text-white transition"><svg class="w-3 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 0.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.772-2.618 6.972-6.98.058-1.28.071-1.689.071-4.948 0-3.259-.013-3.668-.071-4.948-.2-4.355-2.618-6.77-6.972-6.98-1.281-.058-1.689-.072-4.948-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg></a>
+                    </div>
+                </div>
+            <div class="space-y-3">
+                <h4 class="text-white font-bold tracking-wider uppercase text-[11px]">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="/" class="hover:text-white transition">Home</a></li>
+                    <li><a href="about_us.html" class="hover:text-white transition">About Us</a></li>
+                    <li><a href="Contact_us.html" class="hover:text-white transition">Contact</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <h4 class="font-bold text-white text-sm">Legal</h4>
+                <a href="#" class=" open-privacy-btn block text-gray-400 hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="open-terms-btn block text-gray-400 hover:text-white transition">Terms of Service</a>
+            </div>
+            <div class="space-y-3 md:col-span-1">
+                <h4 class="font-bold text-white text-sm">Contact</h4>
+                <p class="flex items-center gap-2.5 text-gray-400"><svg class="w-4 h-4 text-gray-500" fill="none"
+                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg> info@rapavo.com</p>
+                <!-- <p class="flex items-center gap-2.5 text-gray-400"><svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> +1 (234) 800-0000</p> -->
+                <p class="flex items-center gap-2.5 text-gray-400"><svg class="w-4 h-4 text-gray-500" fill="none"
+                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg> Lagos, Nigeria</p>
+            </div>
+        </div>
+        <div class="border-t border-gray-900 container mx-auto max-w-5xl mt-12 pt-8 text-center text-gray-600">
+            &copy; 2026 Rapavo. All rights reserved.
+        </div>
+    </footer>
+    
+    
+    
+    <div id="privacy-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70">
+        <div
+            class="bg-rapavo-dark border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+    
+            <!-- Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-800 shrink-0">
+                <h3 class="text-lg font-extrabold text-white">Privacy Policy</h3>
+                <button id="privacy-modal-close" class="text-gray-400 hover:text-white transition p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+    
+            <!-- Scrollable body -->
+            <div class="terms-scroll overflow-y-auto px-6 py-5 space-y-5 text-sm text-gray-300 leading-relaxed">
+                <p class="text-xs text-gray-500">Last Updated: <span id="privacy-last-updated">[Insert Date]</span></p>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">1. Introduction</h4>
+                    <p>Welcome to Rapavo ("Rapavo," "we," "our," or "us"). Rapavo is a property marketplace and listing
+                        platform
+                        designed to help property seekers, real estate agents, property owners, and investors discover,
+                        manage, and
+                        share property opportunities.</p>
+                    <p class="mt-2">We are committed to protecting your privacy and ensuring that your personal information
+                        is
+                        handled securely and responsibly.</p>
+                    <p class="mt-2">By using the Rapavo website, mobile application, and related services (collectively, the
+                        "Services"), you agree to the collection and use of information in accordance with this Privacy
+                        Policy.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">2. Information We Collect</h4>
+                    <p class="font-semibold text-gray-200">Personal Information</p>
+                    <p class="mt-1">When you register or use Rapavo, we may collect:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Full name</li>
+                        <li>Email address</li>
+                        <li>Phone number</li>
+                        <li>Profile photo</li>
+                        <li>Business name</li>
+                        <li>Agency information</li>
+                        <li>Property-related information</li>
+                        <li>Identification documents (for verification purposes)</li>
+                        <li>Payment and subscription information</li>
+                    </ul>
+    
+                    <p class="font-semibold text-gray-200 mt-4">Property Content</p>
+                    <p class="mt-1">Agents and users may upload:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Property photos</li>
+                        <li>Property videos</li>
+                        <li>Property descriptions</li>
+                        <li>Property location details</li>
+                        <li>Property pricing information</li>
+                        <li>Property documents</li>
+                    </ul>
+    
+                    <p class="font-semibold text-gray-200 mt-4">Usage Information</p>
+                    <p class="mt-1">We may automatically collect:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Device information</li>
+                        <li>IP address</li>
+                        <li>Browser type</li>
+                        <li>Mobile device identifiers</li>
+                        <li>Operating system</li>
+                        <li>App usage statistics</li>
+                        <li>Login activity</li>
+                    </ul>
+    
+                    <p class="font-semibold text-gray-200 mt-4">Location Information</p>
+                    <p class="mt-1">With your permission, Rapavo may collect location information to improve property
+                        discovery and
+                        search results.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">3. How We Use Your Information</h4>
+                    <p>We use your information to:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Create and manage your account</li>
+                        <li>Display property listings</li>
+                        <li>Verify agents and property information</li>
+                        <li>Process subscriptions and payments</li>
+                        <li>Improve platform performance</li>
+                        <li>Provide customer support</li>
+                        <li>Send notifications and updates</li>
+                        <li>Detect fraud and unauthorized activities</li>
+                        <li>Comply with legal obligations</li>
+                    </ul>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">4. Property Listings and User Content</h4>
+                    <p>When you upload property listings, photos, videos, descriptions, or other content to Rapavo:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>You retain ownership of your content.</li>
+                        <li>You grant Rapavo permission to host, display, process, and distribute the content through our
+                            platform.
+                        </li>
+                        <li>You are responsible for ensuring that uploaded content is accurate and lawful.</li>
+                    </ul>
+                    <p class="mt-2">Rapavo reserves the right to remove content that violates our policies.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">5. Information Sharing</h4>
+                    <p>We do not sell your personal information. We may share information with:</p>
+    
+                    <p class="font-semibold text-gray-200 mt-3">Service Providers</p>
+                    <p class="mt-1">Trusted third parties that assist with: cloud storage, payment processing, analytics,
+                        email
+                        services, and customer support.</p>
+    
+                    <p class="font-semibold text-gray-200 mt-3">Legal Requirements</p>
+                    <p class="mt-1">We may disclose information if required by law enforcement agencies, court orders,
+                        regulatory
+                        authorities, or applicable laws and regulations.</p>
+    
+                    <p class="font-semibold text-gray-200 mt-3">Business Transfers</p>
+                    <p class="mt-1">If Rapavo is involved in a merger, acquisition, or sale of assets, user information may
+                        be
+                        transferred as part of that transaction.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">6. Payment Information</h4>
+                    <p>Subscription and payment transactions may be processed through third-party payment providers such as
+                        Paystack, Flutterwave, or other approved payment processors.</p>
+                    <p class="mt-2">Rapavo does not store complete card details on its servers. Payment providers maintain
+                        their own
+                        privacy and security policies.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">7. Data Storage and Security</h4>
+                    <p>We implement appropriate security measures to protect your information, including secure
+                        authentication,
+                        encrypted data transmission, access controls, and regular security monitoring.</p>
+                    <p class="mt-2">However, no system can guarantee absolute security, and users share information at their
+                        own
+                        risk.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">8. Data Retention</h4>
+                    <p>We retain personal information only for as long as necessary to provide our services, comply with
+                        legal
+                        obligations, resolve disputes, and enforce agreements.</p>
+                    <p class="mt-2">When data is no longer required, it may be deleted or anonymized.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">9. Your Rights</h4>
+                    <p>Depending on applicable laws, you may have the right to:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Access your personal information</li>
+                        <li>Correct inaccurate information</li>
+                        <li>Request deletion of your account</li>
+                        <li>Withdraw consent</li>
+                        <li>Restrict certain processing activities</li>
+                        <li>Request a copy of your data</li>
+                    </ul>
+                    <p class="mt-2">Requests can be submitted through our support channels.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">10. Cookies and Similar Technologies</h4>
+                    <p>Rapavo may use cookies and similar technologies to maintain user sessions, improve platform
+                        functionality,
+                        analyze usage trends, and personalize user experiences.</p>
+                    <p class="mt-2">Users may adjust browser settings to manage cookies.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">11. Children's Privacy</h4>
+                    <p>Rapavo is not intended for individuals under the age of 18. We do not knowingly collect personal
+                        information
+                        from children.</p>
+                    <p class="mt-2">If we become aware that information has been collected from a child, we will take steps
+                        to
+                        remove it promptly.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">12. Third-Party Links</h4>
+                    <p>Our platform may contain links to third-party websites or services. Rapavo is not responsible for the
+                        privacy
+                        practices or content of external websites.</p>
+                    <p class="mt-2">Users should review the privacy policies of those third parties before providing
+                        information.
+                    </p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">13. International Data Transfers</h4>
+                    <p>Your information may be processed and stored in countries outside your country of residence. By using
+                        Rapavo,
+                        you consent to such transfers where necessary for service delivery.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">14. Changes to This Privacy Policy</h4>
+                    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an
+                        updated
+                        revision date.</p>
+                    <p class="mt-2">Continued use of Rapavo after changes become effective constitutes acceptance of the
+                        revised
+                        policy.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">15. Contact Us</h4>
+                    <p>For questions, concerns, or requests relating to this Privacy Policy, please contact:</p>
+                    <p class="mt-2">Rapavo Email: <a href="mailto:privacy@rapavo.com"
+                            class="text-rapavo-green hover:underline">privacy@rapavo.com</a></p>
+                    <p>Website: <a href="https://rapavo.com" class="text-rapavo-green hover:underline">rapavo.com</a></p>
+                </section>
+    
+                <p class="text-center text-rapavo-green font-bold text-sm pt-2">Rapavo – The Smarter Way to Property</p>
+            </div>
+    
+            <!-- Footer -->
+            <div class="p-6 border-t border-gray-800 shrink-0">
+                <button id="privacy-modal-accept"
+                    class="w-full rounded-xl bg-rapavo-green text-white font-bold py-3 hover:bg-opacity-90 transition text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <div id="terms-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70">
+        <div
+            class="bg-rapavo-dark border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+    
+            <!-- Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-800 shrink-0">
+                <h3 class="text-lg font-extrabold text-white">Terms of Use</h3>
+                <button id="terms-modal-close" class="text-gray-400 hover:text-white transition p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+    
+            <!-- Scrollable body -->
+            <div class="overflow-y-auto px-6 py-5 space-y-5 text-sm text-gray-300 leading-relaxed">
+                <p class="text-xs text-gray-500">Last Updated: <span id="terms-last-updated">[Insert Date]</span></p>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">1. Acceptance of Terms</h4>
+                    <p>Welcome to Rapavo ("Rapavo," "we," "our," or "us"). These Terms of Use ("Terms") govern your access
+                        to and
+                        use of the Rapavo website, mobile application, and related services (collectively, the "Platform").
+                    </p>
+                    <p class="mt-2">By accessing or using Rapavo, you agree to be bound by these Terms. If you do not agree
+                        to these
+                        Terms, you may not use the Platform.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">2. About Rapavo</h4>
+                    <p>Rapavo is a property marketplace that enables users to:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Discover property opportunities</li>
+                        <li>Upload and manage property listings</li>
+                        <li>Share property information</li>
+                        <li>Connect with property seekers, agents, investors, and property owners</li>
+                        <li>Access real estate-related services and tools</li>
+                    </ul>
+                    <p class="mt-2">Rapavo acts solely as a technology platform and is not a real estate broker, agent,
+                        surveyor,
+                        valuer, legal adviser, or financial adviser.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">3. Eligibility</h4>
+                    <p>To use Rapavo, you must:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Be at least 18 years old</li>
+                        <li>Have the legal capacity to enter into contracts</li>
+                        <li>Provide accurate and complete registration information</li>
+                        <li>Comply with all applicable laws and regulations</li>
+                    </ul>
+                    <p class="mt-2">By using the Platform, you represent that you meet these requirements.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">4. Account Registration</h4>
+                    <p>To access certain features, users may be required to create an account. You agree to:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Provide accurate information</li>
+                        <li>Keep your login credentials secure</li>
+                        <li>Maintain updated account information</li>
+                        <li>Notify us immediately of unauthorized access</li>
+                    </ul>
+                    <p class="mt-2">You are responsible for all activities conducted under your account.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">5. Property Listings</h4>
+                    <p>Users may upload property listings including photos, videos, property descriptions, prices,
+                        locations,
+                        contact details, and supporting information.</p>
+                    <p class="mt-2">You are solely responsible for the accuracy and legality of any content you publish. You
+                        agree
+                        not to:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Upload false listings</li>
+                        <li>Misrepresent ownership or authority</li>
+                        <li>Post misleading prices</li>
+                        <li>Publish fraudulent content</li>
+                        <li>Infringe the rights of others</li>
+                    </ul>
+                    <p class="mt-2">Rapavo reserves the right to review, edit, suspend, or remove listings at its
+                        discretion.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">6. Agent Verification</h4>
+                    <p>Rapavo may offer agent verification programs. Verification does not constitute a guarantee of
+                        competence, an
+                        endorsement of services, a warranty of honesty, or a guarantee of successful transactions.</p>
+                    <p class="mt-2">Users should conduct their own due diligence before entering any transaction.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">7. Property Transactions</h4>
+                    <p>Rapavo does not own listed properties, participate in negotiations, collect commissions on private
+                        transactions unless expressly stated, or guarantee transaction outcomes.</p>
+                    <p class="mt-2">All agreements, payments, inspections, and legal processes occur directly between users
+                        and
+                        relevant parties. Rapavo is not liable for disputes arising from property transactions.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">8. Subscription Services</h4>
+                    <p>Certain features may require a paid subscription. Subscriptions may include additional cloud storage,
+                        premium
+                        listing features, enhanced visibility, and advanced tools and services.</p>
+                    <p class="mt-2">Subscription fees, billing cycles, and benefits will be displayed before purchase.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">9. Payments</h4>
+                    <p>Payments may be processed through third-party payment providers such as Paystack, Flutterwave, or
+                        other
+                        approved processors.</p>
+                    <p class="mt-2">Users are responsible for ensuring payment information is accurate. Rapavo is not
+                        responsible
+                        for errors caused by third-party payment providers.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">10. Refund Policy</h4>
+                    <p>Unless otherwise required by law: subscription fees are generally non-refundable. Refund requests may
+                        be
+                        considered on a case-by-case basis. Rapavo reserves the right to approve or deny refund requests.
+                    </p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">11. Intellectual Property</h4>
+                    <p>The Platform, including its software, design, branding, logos, text, graphics, and features, is owned
+                        by
+                        Rapavo or its licensors and is protected by intellectual property laws.</p>
+                    <p class="mt-2">You may not copy, modify, reverse engineer, distribute, or resell any part of the
+                        Platform
+                        without prior written permission.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">12. User Content License</h4>
+                    <p>You retain ownership of content you upload. However, by uploading content, you grant Rapavo a
+                        worldwide,
+                        non-exclusive, royalty-free license to store, display, distribute, reproduce, and promote your
+                        content in
+                        connection with operating and marketing the Platform.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">13. Prohibited Activities</h4>
+                    <p>Users must not:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Post fraudulent listings</li>
+                        <li>Upload harmful software</li>
+                        <li>Engage in spam or unsolicited marketing</li>
+                        <li>Impersonate others</li>
+                        <li>Harass or abuse users</li>
+                        <li>Attempt unauthorized access to systems</li>
+                        <li>Manipulate listing rankings</li>
+                        <li>Violate applicable laws</li>
+                    </ul>
+                    <p class="mt-2">Violations may result in suspension or termination.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">14. Suspension and Termination</h4>
+                    <p>Rapavo may suspend or terminate accounts that violate these Terms, engage in fraudulent activity,
+                        abuse the
+                        Platform, or present security risks.</p>
+                    <p class="mt-2">Termination may occur without prior notice where necessary.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">15. Disclaimer of Warranties</h4>
+                    <p>The Platform is provided on an "as is" and "as available" basis. Rapavo makes no warranties regarding
+                        accuracy of listings, availability of properties, platform uptime, transaction success, or financial
+                        outcomes.
+                    </p>
+                    <p class="mt-2">Use of the Platform is at your own risk.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">16. Limitation of Liability</h4>
+                    <p>To the fullest extent permitted by law, Rapavo shall not be liable for indirect damages, lost
+                        profits, loss
+                        of business opportunities, property disputes, fraud by third parties, data loss, or service
+                        interruptions.</p>
+                    <p class="mt-2">Our total liability shall not exceed the amount paid by the user to Rapavo during the
+                        twelve
+                        (12) months preceding the claim.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">17. Indemnification</h4>
+                    <p>You agree to indemnify and hold Rapavo harmless from any claims, damages, losses, liabilities, and
+                        expenses
+                        arising from your use of the Platform, your listings, your content, your violation of these Terms,
+                        or your
+                        violation of any law or third-party rights.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">18. Privacy</h4>
+                    <p>Your use of Rapavo is also governed by our Privacy Policy. By using the Platform, you acknowledge and
+                        agree
+                        to the collection and use of information as described in the Privacy Policy.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">19. Changes to These Terms</h4>
+                    <p>Rapavo may update these Terms at any time. Changes become effective upon posting. Continued use of
+                        the
+                        Platform constitutes acceptance of the updated Terms.</p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">20. Governing Law</h4>
+                    <p>These Terms shall be governed by and interpreted in accordance with the laws of the Federal Republic
+                        of
+                        Nigeria. Any disputes arising from these Terms shall be subject to the jurisdiction of the courts of
+                        Nigeria.
+                    </p>
+                </section>
+    
+                <section>
+                    <h4 class="text-white font-bold text-sm mb-2">21. Contact Information</h4>
+                    <p>For questions regarding these Terms, contact:</p>
+                    <p class="mt-2">Rapavo Email: <a href="mailto:legal@rapavo.com"
+                            class="text-rapavo-green hover:underline">legal@rapavo.com</a></p>
+                    <p>Website: <a href="https://rapavo.com" class="text-rapavo-green hover:underline">rapavo.com</a></p>
+                </section>
+    
+                <p class="text-center text-rapavo-green font-bold text-sm pt-2">Rapavo – The Smarter Way to Property</p>
+            </div>
+    
+            <!-- Footer -->
+            <div class="p-6 border-t border-gray-800 shrink-0">
+                <button id="terms-modal-accept"
+                    class="w-full rounded-xl bg-rapavo-green text-white font-bold py-3 hover:bg-opacity-90 transition text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+ <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+
+    menuBtn.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('opacity-0');
+      
+      if (!isOpen) {
+        mobileMenu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+        mobileMenu.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        
+        // Morph into Close "X" vector structure cleanly
+        hamburgerIcon.setAttribute('viewBox', '0 0 24 24');
+        hamburgerIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>`;
+      } else {
+        mobileMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+        mobileMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        
+        // Revert to custom clean straight lines option structure
+        hamburgerIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"></path>`;
+      }
+    });
+
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            hamburgerIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"></path>`;
+        });
+    });
+
+
+     // --- Modal Fade-In Controller ---
+        const modalWrapper = document.getElementById('waitlist-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const openWaitlistButtons = document.querySelectorAll('.open-waitlist-btn');
+
+        function openModal() {
+            // Close the mobile menu first if it's open
+            mobileMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            hamburgerIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"></path>`;
+
+            modalWrapper.classList.remove('invisible');
+            modalWrapper.classList.add('opacity-100');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeModal() {
+            modalWrapper.classList.remove('opacity-100');
+            modalWrapper.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            document.body.classList.remove('overflow-hidden');
+
+            setTimeout(() => {
+                modalWrapper.classList.add('invisible');
+            }, 300);
+        }
+
+        openWaitlistButtons.forEach(button => {
+            button.addEventListener('click', (e) => { e.preventDefault(); window.location.href = '/signup'; });
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modalWrapper.classList.contains('invisible')) {
+                closeModal();
+            }
+        });
+
+        // --- Waitlist Form Submission ---
+        const waitlistForm = document.getElementById("waitlist-form");
+        const waitlistSubmitButton = waitlistForm.querySelector('button[type="submit"]');
+        const waitlistSubmitDefaultHTML = waitlistSubmitButton.innerHTML;
+
+        function setWaitlistLoading(isLoading) {
+            waitlistSubmitButton.disabled = isLoading;
+            waitlistSubmitButton.classList.toggle("opacity-70", isLoading);
+            waitlistSubmitButton.classList.toggle("cursor-not-allowed", isLoading);
+
+            if (isLoading) {
+                waitlistSubmitButton.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Joining...
+      `;
+            } else {
+                waitlistSubmitButton.innerHTML = waitlistSubmitDefaultHTML;
+            }
+        }
+
+        waitlistForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const full_name = document.getElementById("full_name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone_number = document.getElementById("phone_number").value.trim();
+            const user_type = document.getElementById("user_type").value;
+
+            setWaitlistLoading(true);
+
+            try {
+                const res = await fetch("join.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        full_name,
+                        email,
+                        phone_number,
+                        user_type
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    waitlistForm.reset();
+                    modalContent.querySelector("form").outerHTML = `
+          <div class="text-center py-6">
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#EAF5E4]">
+              <svg class="h-6 w-6 text-rapavo-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">You're on the list!</h3>
+            <p class="text-sm text-rapavo-text">${data.message}</p>
+          </div>
+        `;
+                } else {
+                    let errorBox = waitlistForm.querySelector(".waitlist-error");
+                    if (!errorBox) {
+                        errorBox = document.createElement("p");
+                        errorBox.className = "waitlist-error text-xs text-red-400 text-center";
+                        waitlistSubmitButton.insertAdjacentElement("beforebegin", errorBox);
+                    }
+                    errorBox.textContent = data.message;
+                }
+            } catch (err) {
+                let errorBox = waitlistForm.querySelector(".waitlist-error");
+                if (!errorBox) {
+                    errorBox = document.createElement("p");
+                    errorBox.className = "waitlist-error text-xs text-red-400 text-center";
+                    waitlistSubmitButton.insertAdjacentElement("beforebegin", errorBox);
+                }
+                errorBox.textContent = "Something went wrong. Please check your connection and try again.";
+            } finally {
+                setWaitlistLoading(false);
+            }
+        });
+
+
+
+    // --- Contact Form Submission ---
+    const contactForm = document.getElementById("contact-form");
+    const contactSubmitButton = contactForm.querySelector('button[type="submit"]');
+    const contactSubmitDefaultHTML = contactSubmitButton.innerHTML;
+    const privacyCheckbox = document.getElementById("privacy");
+
+    function setContactLoading(isLoading) {
+        contactSubmitButton.disabled = isLoading;
+        contactSubmitButton.classList.toggle("opacity-70", isLoading);
+        contactSubmitButton.classList.toggle("cursor-not-allowed", isLoading);
+
+        if (isLoading) {
+            contactSubmitButton.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Sending...
+      `;
+        } else {
+            contactSubmitButton.innerHTML = contactSubmitDefaultHTML;
+        }
+    }
+
+    function showContactMessage(message, isSuccess) {
+        let box = contactForm.querySelector(".contact-status");
+        if (!box) {
+            box = document.createElement("p");
+            box.className = "contact-status text-xs text-center";
+            contactSubmitButton.insertAdjacentElement("beforebegin", box);
+        }
+        box.textContent = message;
+        box.classList.toggle("text-green-600", isSuccess);
+        box.classList.toggle("text-red-500", !isSuccess);
+    }
+
+    contactForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!privacyCheckbox.checked) {
+            showContactMessage("Please agree to the Privacy Policy to continue.", false);
+            return;
+        }
+
+        const full_name = document.getElementById("contact_full_name").value.trim();
+        const email = document.getElementById("contact_email").value.trim();
+        const phone = document.getElementById("contact_phone").value.trim();
+        const subject = document.getElementById("contact_subject").value.trim();
+        const message = document.getElementById("contact_message").value.trim();
+
+        setContactLoading(true);
+
+        try {
+            const res = await fetch("contact.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ full_name, email, phone, subject, message })
+            });
+
+            const data = await res.json();
+
+            showContactMessage(data.message, data.success);
+
+            if (data.success) {
+                contactForm.reset();
+            }
+        } catch (err) {
+            showContactMessage("Something went wrong. Please check your connection and try again.", false);
+        } finally {
+            setContactLoading(false);
+        }
+    });
+
+
+        
+
+            // --- Terms of Use Modal ---
+            const termsModal = document.getElementById('terms-modal');
+            const termsModalClose = document.getElementById('terms-modal-close');
+            const termsModalAccept = document.getElementById('terms-modal-accept');
+            const openTermsButtons = document.querySelectorAll('.open-terms-btn');
+
+            function openTermsModal() {
+                termsModal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeTermsModal() {
+                termsModal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            openTermsButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openTermsModal();
+                });
+            });
+
+            termsModalClose.addEventListener('click', closeTermsModal);
+            termsModalAccept.addEventListener('click', closeTermsModal);
+            termsModal.addEventListener('click', (e) => {
+                if (e.target === termsModal) closeTermsModal();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !termsModal.classList.contains('hidden')) {
+                    closeTermsModal();
+                }
+            });
+
+
+
+
+            // --- Privacy Policy Modal ---
+            const privacyModal = document.getElementById('privacy-modal');
+            const privacyModalClose = document.getElementById('privacy-modal-close');
+            const privacyModalAccept = document.getElementById('privacy-modal-accept');
+            const openPrivacyButtons = document.querySelectorAll('.open-privacy-btn');
+
+            function openPrivacyModal() {
+                privacyModal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closePrivacyModal() {
+                privacyModal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            openPrivacyButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openPrivacyModal();
+                });
+            });
+
+            privacyModalClose.addEventListener('click', closePrivacyModal);
+            privacyModalAccept.addEventListener('click', closePrivacyModal);
+            privacyModal.addEventListener('click', (e) => {
+                if (e.target === privacyModal) closePrivacyModal();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !privacyModal.classList.contains('hidden')) {
+                    closePrivacyModal();
+                }
+            });
+  </script>
+</body>
+</html>

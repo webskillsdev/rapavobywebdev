@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rapavo - Privacy Policy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "rapavo-green": "#519C1D",
+              "rapavo-dark": "#0B1313",
+              "rapavo-input": "#131C1C",
+              "rapavo-text": "#5A6565",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .terms-scroll::-webkit-scrollbar {
+        width: 2px;
+      }
+      .terms-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .terms-scroll::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+      }
+      .terms-scroll::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+      .terms-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="font-sans bg-white text-rapavo-dark">
+    <header
+      class="fixed top-0 left-0 w-full mx-auto px-6 py-6 flex items-center justify-between z-50 bg-white"
+    >
+      <a href="/" class="flex items-center space-x-2 ml-10">
+        <img
+          src="logo.png"
+          alt="Rapavo - The Smarter Way to Property"
+          class="h-16 w-auto"
+        />
+      </a>
+
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold">
+        <a
+          href="/"
+          class="text-rapavo-text hover:text-rapavo-dark transition"
+          >Home</a
+        >
+        <a
+          href="about_us.html"
+          class="text-rapavo-text hover:text-rapavo-dark transition"
+          >About Us</a
+        >
+        <a
+          href="how_it_works.html"
+          class="text-rapavo-text hover:text-rapavo-dark transition"
+          >How It Works</a
+        >
+        <a
+          href="Contact_us.html"
+          class="text-rapavo-text hover:text-rapavo-dark transition"
+          >Contact</a
+        >
+      </nav>
+
+      <div class="hidden md:flex items-center">
+        <a
+          href="/signup"
+          class="open-waitlist-btn bg-rapavo-green text-white px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-opacity-90 transition shadow-sm"
+        >
+          Sign Up
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            ></path>
+          </svg>
+        </a>
+      </div>
+
+      <button
+        id="menu-btn"
+        class="md:hidden text-rapavo-dark focus:outline-none z-50 p-2"
+      >
+        <svg
+          id="hamburger-icon"
+          class="w-6 h-6 transition-transform duration-300"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 12h18M3 6h18M3 18h18"
+          ></path>
+        </svg>
+      </button>
+
+      <div
+        id="mobile-menu"
+        class="absolute top-full left-0 w-full bg-white shadow-xl border-b border-gray-100 p-6 flex flex-col space-y-4 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 md:hidden z-40"
+      >
+        <nav class="flex flex-col space-y-4 text-base font-semibold">
+          <a
+            href="/"
+            class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
+            >Home</a
+          >
+          <a
+            href="about_us.html"
+            class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
+            >About Us</a
+          >
+          <a
+            href="how_it_works.html"
+            class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
+            >How It Works</a
+          >
+          <a
+            href="Contact_us.html"
+            class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
+            >Contact</a
+          >
+        </nav>
+        <a
+          href="/signup"
+          class="open-waitlist-btn bg-rapavo-green text-white px-5 py-3.5 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2 hover:bg-opacity-90 transition shadow-sm w-full"
+        >
+          Sign Up
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            ></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Page hero -->
+    <section class="pt-40 pb-10 px-6 bg-white">
+      <div class="max-w-3xl mx-auto text-center">
+        <span
+          class="inline-block bg-rapavo-green/10 text-rapavo-green text-xs font-bold tracking-wide uppercase px-4 py-1.5 rounded-full mb-5"
+          >Legal</span
+        >
+        <h1 class="text-4xl md:text-5xl font-extrabold text-rapavo-dark mb-4">
+          Privacy Policy
+        </h1>
+        <p class="text-rapavo-text text-sm font-medium">
+          Last Updated: July 20, 2026
+        </p>
+      </div>
+    </section>
+
+    <main class="px-6 pb-24">
+      <div class="max-w-3xl mx-auto">
+        <!-- Introduction -->
+        <div
+          class="bg-rapavo-dark rounded-2xl p-8 md:p-10 mb-10 text-white shadow-sm"
+        >
+          <p class="text-white/90 leading-relaxed">
+            Welcome to Rapavo (“Rapavo”, “we”, “our”, or “us”). Rapavo is a
+            property marketplace designed to connect property seekers, real
+            estate agents, property owners, developers, and investors. We are
+            committed to protecting your privacy and ensuring that your
+            personal information is handled securely and responsibly.
+          </p>
+          <p class="text-white/90 leading-relaxed mt-4">
+            By using the Rapavo website, mobile application, and related
+            services, you agree to this Privacy Policy.
+          </p>
+        </div>
+
+        <!-- Table of contents -->
+        <nav
+          class="hidden md:grid grid-cols-2 gap-x-8 gap-y-2 bg-rapavo-green/5 border border-rapavo-green/15 rounded-2xl p-6 mb-10 text-sm font-semibold"
+        >
+          <a href="#information-we-collect" class="text-rapavo-text hover:text-rapavo-green transition">1. Information We Collect</a>
+          <a href="#how-we-use" class="text-rapavo-text hover:text-rapavo-green transition">2. How We Use Your Information</a>
+          <a href="#location" class="text-rapavo-text hover:text-rapavo-green transition">3. Location Information</a>
+          <a href="#data-sharing" class="text-rapavo-text hover:text-rapavo-green transition">4. Data Sharing</a>
+          <a href="#data-security" class="text-rapavo-text hover:text-rapavo-green transition">5. Data Security</a>
+          <a href="#your-rights" class="text-rapavo-text hover:text-rapavo-green transition">6. Your Rights</a>
+          <a href="#data-retention" class="text-rapavo-text hover:text-rapavo-green transition">7. Data Retention</a>
+          <a href="#childrens-privacy" class="text-rapavo-text hover:text-rapavo-green transition">8. Children's Privacy</a>
+          <a href="#changes" class="text-rapavo-text hover:text-rapavo-green transition">9. Changes to This Policy</a>
+          <a href="#contact" class="text-rapavo-text hover:text-rapavo-green transition">10. Contact Us</a>
+        </nav>
+
+        <div class="space-y-10">
+          <!-- Information We Collect -->
+          <section id="information-we-collect" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >1</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Information We Collect
+              </h2>
+            </div>
+            <p class="text-rapavo-text mb-4">We may collect:</p>
+            <ul class="space-y-2.5">
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Name</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Email address</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Phone number</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Profile information</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Property listings, photos and videos you upload</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Device information</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Location information (when permission is granted)</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Usage and analytics data</span>
+              </li>
+            </ul>
+          </section>
+
+          <!-- How We Use Your Information -->
+          <section id="how-we-use" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >2</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                How We Use Your Information
+              </h2>
+            </div>
+            <p class="text-rapavo-text mb-4">We use your information to:</p>
+            <ul class="space-y-2.5">
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Create and manage your account</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Display and manage property listings</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Connect buyers, sellers, and agents</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Improve our services</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Respond to customer support requests</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Prevent fraud and misuse</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Comply with legal obligations</span>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Location Information -->
+          <section id="location" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >3</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Location Information
+              </h2>
+            </div>
+            <p class="text-rapavo-text leading-relaxed">
+              With your permission, Rapavo may access your location to improve
+              property search, nearby listings, and map functionality. You may
+              disable location access at any time through your device
+              settings.
+            </p>
+          </section>
+
+          <!-- Data Sharing -->
+          <section id="data-sharing" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >4</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Data Sharing
+              </h2>
+            </div>
+            <ul class="space-y-2.5">
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">We do not sell your personal information.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">We may share information with trusted service providers that help us operate Rapavo, including cloud storage, analytics, authentication, and payment providers.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">We may also disclose information where required by law.</span>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Data Security -->
+          <section id="data-security" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >5</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Data Security
+              </h2>
+            </div>
+            <p class="text-rapavo-text leading-relaxed">
+              We use industry-standard security measures to protect your
+              information. However, no online service can guarantee absolute
+              security.
+            </p>
+          </section>
+
+          <!-- Your Rights -->
+          <section id="your-rights" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >6</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Your Rights
+              </h2>
+            </div>
+            <p class="text-rapavo-text mb-4">
+              Depending on your location, you may request to:
+            </p>
+            <ul class="space-y-2.5">
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Access your personal information</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Correct inaccurate information</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Delete your account and associated data</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-2 w-1.5 h-1.5 rounded-full bg-rapavo-green shrink-0"></span>
+                <span class="text-rapavo-text">Withdraw certain permissions</span>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Data Retention -->
+          <section id="data-retention" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >7</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Data Retention
+              </h2>
+            </div>
+            <p class="text-rapavo-text leading-relaxed">
+              We retain your information only for as long as necessary to
+              provide our services, comply with legal obligations, resolve
+              disputes, and enforce our policies.
+            </p>
+          </section>
+
+          <!-- Children's Privacy -->
+          <section id="childrens-privacy" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >8</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Children's Privacy
+              </h2>
+            </div>
+            <p class="text-rapavo-text leading-relaxed">
+              Rapavo is not intended for children under 13 years of age. We do
+              not knowingly collect personal information from children.
+            </p>
+          </section>
+
+          <!-- Changes to This Policy -->
+          <section id="changes" class="scroll-mt-28">
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >9</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-rapavo-dark">
+                Changes to This Policy
+              </h2>
+            </div>
+            <p class="text-rapavo-text leading-relaxed">
+              We may update this Privacy Policy from time to time. Any changes
+              will be posted on this page together with the updated revision
+              date.
+            </p>
+          </section>
+
+          <!-- Contact Us -->
+          <section
+            id="contact"
+            class="scroll-mt-28 bg-rapavo-input rounded-2xl p-8 md:p-10 text-white"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="flex items-center justify-center w-9 h-9 rounded-lg bg-rapavo-green text-white font-bold text-sm shrink-0"
+                >10</span
+              >
+              <h2 class="text-xl md:text-2xl font-bold text-white">
+                Contact Us
+              </h2>
+            </div>
+            <p class="text-white/80 mb-4">
+              If you have any questions regarding this Privacy Policy, please
+              contact us:
+            </p>
+            <div class="flex flex-col gap-2 text-sm font-semibold">
+              <a
+                href="mailto:support@rapavo.com"
+                class="text-rapavo-green hover:underline"
+                >Email: support@rapavo.com</a
+              >
+              <a
+                href="https://rapavo.com"
+                class="text-rapavo-green hover:underline"
+                >Website: https://rapavo.com</a
+              >
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const menuBtn = document.getElementById("menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const hamburgerIcon = document.getElementById("hamburger-icon");
+
+      menuBtn.addEventListener("click", () => {
+        const isOpen = mobileMenu.classList.contains("opacity-100");
+        if (isOpen) {
+          mobileMenu.classList.remove("opacity-100", "translate-y-0");
+          mobileMenu.classList.add(
+            "opacity-0",
+            "pointer-events-none",
+            "-translate-y-4"
+          );
+          hamburgerIcon.style.transform = "rotate(0deg)";
+        } else {
+          mobileMenu.classList.add("opacity-100", "translate-y-0");
+          mobileMenu.classList.remove(
+            "opacity-0",
+            "pointer-events-none",
+            "-translate-y-4"
+          );
+          hamburgerIcon.style.transform = "rotate(90deg)";
+        }
+      });
+    </script>
+  </body>
+</html>
