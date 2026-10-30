@@ -1,8 +1,16 @@
-   <IfModule mod_rewrite.c>
-     RewriteEngine On
-     RewriteBase /
-     RewriteRule ^index\.html$ - [L]
-     RewriteCond %{REQUEST_FILENAME} !-f
-     RewriteCond %{REQUEST_FILENAME} !-d
-     RewriteRule . /index.html [L]
-   </IfModule>
+# Rapavo — React single-page app on Apache (DirectAdmin)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Old page addresses -> new clean addresses
+  RewriteRule ^about_us\.html$ /about/ [R=301,L]
+  RewriteRule ^how_it_works\.html$ /how-it-works/ [R=301,L]
+  RewriteRule ^Contact_us\.html$ /contact/ [R=301,L]
+  RewriteRule ^privacy\.html$ /privacy/ [R=301,L]
+
+  # Serve real files and real folders (about/, contact/ ...) as they are
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  # Everything else goes to the React app
+  RewriteRule ^ /index.html [L]
+</IfModule>
