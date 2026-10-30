@@ -46,6 +46,13 @@ function Header() {
         {isAuthenticated && (
           <Link to="/post-property" className="hover:text-green-600">List a Property</Link>
         )}
+        {!isAuthenticated && (
+<>
+            <a href="/about/" className="hover:text-green-600">About Us</a>
+            <a href="/how-it-works/" className="hover:text-green-600">How It Works</a>
+            <a href="/contact/" className="hover:text-green-600">Contact</a>
+          </>
+        )}
       </nav>
 
       {isAuthenticated && user ? (

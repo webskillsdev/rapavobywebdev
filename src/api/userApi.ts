@@ -146,7 +146,7 @@ export const userApi = api.injectEndpoints({
             .from("properties")
             .select("*", { count: "exact", head: true })
             .eq("owner_id", userId)
-            .eq("status", "approved");
+            .eq("status", "active");
 
           const { count: profileViews } = await supabase
             .from("profile_views")

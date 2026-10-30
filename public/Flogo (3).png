@@ -10,7 +10,7 @@
         theme: {
           extend: {
             colors: {
-              "rapavo-green": "#519C1D",
+              "rapavo-green": "#16a34a",
               "rapavo-dark": "#0B1313",
               "rapavo-input": "#131C1C",
               "rapavo-text": "#5A6565",
@@ -57,7 +57,7 @@
     >
       <a href="/" class="flex items-center space-x-2 ml-10">
         <img
-          src="logo.png"
+          src="/logo.png"
           alt="Rapavo - The Smarter Way to Property"
           class="h-16 w-auto"
         />
@@ -70,17 +70,17 @@
           >Home</a
         >
         <a
-          href="about_us.html"
+          href="/about/"
           class="text-rapavo-text hover:text-rapavo-dark transition"
           >About Us</a
         >
         <a
-          href="how_it_works.html"
+          href="/how-it-works/"
           class="text-rapavo-text hover:text-rapavo-dark transition"
           >How It Works</a
         >
         <a
-          href="Contact_us.html"
+          href="/contact/"
           class="text-rapavo-text hover:text-rapavo-dark transition"
           >Contact</a
         >
@@ -139,17 +139,17 @@
             >Home</a
           >
           <a
-            href="about_us.html"
+            href="/about/"
             class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
             >About Us</a
           >
           <a
-            href="how_it_works.html"
+            href="/how-it-works/"
             class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
             >How It Works</a
           >
           <a
-            href="Contact_us.html"
+            href="/contact/"
             class="text-rapavo-text hover:text-rapavo-dark px-4 py-2 transition"
             >Contact</a
           >

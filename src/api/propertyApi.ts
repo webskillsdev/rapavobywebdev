@@ -851,7 +851,7 @@ toggleSavedProperty: builder.mutation({
           let query = supabase
             .from("properties")
             .select(`*, property_media(*), profiles(*)`, { count: "exact" })
-            .eq("status", "pending")
+            .eq("status", "active")
             .range(from, to);
 
           if (sort === "price_asc") {
@@ -1271,7 +1271,7 @@ toggleSavedProperty: builder.mutation({
             .from("feed_view")
             .select("*")
             .eq("item_type", "property")
-            .eq("status", "pending");
+            .eq("status", "active");
 
           switch (category) {
             case "recent":
@@ -1374,7 +1374,7 @@ toggleSavedProperty: builder.mutation({
         `,
             )
             .eq("owner_id", currentUser?.uid)
-            .eq("status", "pending");
+            .eq("status", "active");
 
           if (propertyError) throw propertyError;
 
@@ -1541,7 +1541,7 @@ toggleSavedProperty: builder.mutation({
           profiles!properties_owner_id_fkey(full_name, avatar_url)
         `,
             )
-            .eq("status", "pending")
+            .eq("status", "active")
             .neq("owner_id", currentUser?.uid)
             .order("created_at", { ascending: false })
             .limit(50);

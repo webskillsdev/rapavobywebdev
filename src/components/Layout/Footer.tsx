@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 import { useShell } from "./ShellContext";
+import SiteFooter from "./SiteFooter";
 
 interface FooterItem {
   icon: ReactNode;
@@ -95,6 +98,7 @@ function FooterRow({ items, heading }: { items: FooterItem[]; heading?: ReactNod
 
 export default function Footer() {
   const { showBuyerFooterExtra } = useShell();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   if (showBuyerFooterExtra) {
     return (
@@ -107,6 +111,7 @@ export default function Footer() {
             </span>
           }
         />
+        {!isAuthenticated && <SiteFooter />}
       </footer>
     );
   }
@@ -114,6 +119,7 @@ export default function Footer() {
   return (
     <footer className="mt-auto">
       <FooterRow items={ITEMS} />
+      {!isAuthenticated && <SiteFooter />}
     </footer>
   );
 }
