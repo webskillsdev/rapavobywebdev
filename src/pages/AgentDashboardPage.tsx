@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { RootState } from "../store";
@@ -30,6 +31,7 @@ function SoonCard({ title }: { title: string }) {
 }
 
 export default function AgentDashboardPage() {
+  usePageMeta("Agent Dashboard");
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const { data: listingsData, isLoading: listingsLoading } = useGetMyPropertiesQuery(

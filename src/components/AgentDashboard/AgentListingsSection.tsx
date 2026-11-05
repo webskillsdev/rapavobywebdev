@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDeletePropertyMutation } from "../../api/propertyApi";
 import SharePropertySheet from "../share-sheet/SharePropertySheet";
+import SafeImage from "../SafeImage";
+import { useBrandedDialog } from "../BrandedDialog";
 
 function badgeFor(listingType?: string): { label: string; color: string } {
   if (listingType === "rent") return { label: "FOR RENT", color: "bg-purple-600" };
@@ -44,9 +46,9 @@ function ListingCard({
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
       <Link
         to={detailsPath}
-        className="block relative aspect-[4/3] bg-gray-100 rounded-t-xl overflow-hidden"
+        className="block relative aspect-[16/10] bg-gray-100 rounded-t-xl overflow-hidden"
       >
-        {cover && <img src={cover} alt={property.title} className="h-full w-full object-cover" />}
+        <SafeImage src={cover} alt={property.title} className="h-full w-full object-cover" />
         <span
           className={`absolute top-3 left-3 text-white text-[10px] font-bold px-2 py-1 rounded ${badge.color}`}
         >
@@ -150,14 +152,35 @@ export default function AgentListingsSection({
   loading: boolean;
 }) {
   const [deleteProperty] = useDeletePropertyMutation();
+  const { confirm, notify, dialog } = useBrandedDialog();
 
   async function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
-    await deleteProperty(id);
+    const ok = await confirm({
+      tone: "danger",
+      title: "Delete this listing?",
+      message: (
+        <>
+          Are you sure you want to delete <span className="font-semibold text-green-700">"{title}"</span>?
+        </>
+      ),
+      detail: "This action cannot be undone. Once deleted, this property listing will be permanently removed from your Rapavo account.",
+      confirmLabel: "Delete Listing",
+      cancelLabel: "Keep Listing",
+    });
+    if (!ok) return;
+    const result: any = await deleteProperty(id);
+    if (result?.error) {
+      notify({
+        tone: "error",
+        title: "Listing not deleted",
+        message: "We couldn't delete this listing. Please check your connection and try again.",
+      });
+    }
   }
 
   return (
     <section id="listings" className="mt-8 scroll-mt-6">
+      {dialog}
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold text-gray-900">My Listings</h2>
         {listings.length > 0 && (

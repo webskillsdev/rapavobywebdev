@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -7,6 +8,7 @@ import type { AppDispatch } from "../store";
 import { safeNext, withNext } from "../utils/redirect";
 
 export default function LoginPage() {
+  usePageMeta("Log In");
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [login, { isLoading }] = useLoginMutation();
@@ -29,8 +31,8 @@ export default function LoginPage() {
         password,
       }).unwrap();
       const user = result.data.user;
-      await loadUserProfileIntoStore(dispatch, user.id, user.email ?? email);
-      navigate(next ?? "/dashboard", { replace: true });
+await loadUserProfileIntoStore(dispatch, user.id, user.email ?? email);
+      navigate(next ?? "/feed", { replace: true });
     } catch (err: any) {
       setFormError(err?.message || "Unable to log in. Check your details and try again.");
     }

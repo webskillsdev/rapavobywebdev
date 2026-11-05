@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { RootState } from "../store";
@@ -29,6 +30,7 @@ function SoonCard({ title, description }: { title: string; description: string }
 }
 
 export default function BuyerDashboardPage() {
+  usePageMeta("My Dashboard");
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useBuyerFooterExtra();
@@ -115,6 +117,7 @@ export default function BuyerDashboardPage() {
                 bathrooms={property.bathrooms}
                 sqm={property.sqm}
                 listing_type={property.listing_type}
+                property={{ ...property, saved: true }}
               />
             ))}
           </div>
@@ -137,6 +140,7 @@ export default function BuyerDashboardPage() {
                 bathrooms={property.bathrooms}
                 sqm={property.sqm}
                 listing_type={property.listing_type}
+                property={property}
               />
             ))}
           </div>

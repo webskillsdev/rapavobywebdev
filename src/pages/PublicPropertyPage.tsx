@@ -1,14 +1,24 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetPublicPropertyQuery } from "../api/propertyApi";
 import { extractIdFromSlug } from "../utils/slug";
+import { useBrandedDialog } from "../components/BrandedDialog";
 
 export default function PublicPropertyPage() {
   const { slug } = useParams();
   const id = extractIdFromSlug(slug ?? "");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const { notify, dialog } = useBrandedDialog();
 
   const { data, isLoading, error } = useGetPublicPropertyQuery(id as string);
+  const metaProperty = data?.data;
+  usePageMeta(
+    metaProperty?.title,
+    metaProperty
+      ? `${metaProperty.title} in ${metaProperty.location} — ₦${Number(metaProperty.price ?? 0).toLocaleString()} on RAPAVO.`
+      : null,
+  );
 
   if (isLoading) return <p className="max-w-3xl mx-auto px-6 py-10 text-gray-500">Loading property...</p>;
   if (error) return <p className="max-w-3xl mx-auto px-6 py-10 text-red-600">Something went wrong loading this property.</p>;
@@ -48,7 +58,12 @@ export default function PublicPropertyPage() {
       }
     } else {
       await navigator.clipboard.writeText(url);
-      alert("Link copied to clipboard!");
+      notify({
+        tone: "success",
+        title: "Link copied",
+        message: "The property link is on your clipboard. Paste it anywhere to share.",
+        confirmLabel: "Done",
+      });
     }
   }
 
@@ -96,6 +111,7 @@ export default function PublicPropertyPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-8">
+      {dialog}
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h1 className="text-2xl font-bold text-gray-900">Property Images</h1>
         <p className="text-gray-500 mt-1">

@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -9,6 +10,7 @@ import { safeNext, withNext } from "../utils/redirect";
 type Intent = "buyer" | "agent" | null;
 
 export default function SignUpPage() {
+  usePageMeta("Sign Up", "Create your free RAPAVO account to save properties and get matched with listings.");
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [signUp, { isLoading }] = useSignUpMutation();
@@ -49,7 +51,7 @@ export default function SignUpPage() {
       if (intent === "agent") {
         navigate("/become-agent?next=/agent-dashboard");
       } else {
-  navigate(next ?? "/dashboard", { replace: true });
+  navigate(next ?? "/feed", { replace: true });
       }
     } catch (err: any) {
       setFormError(err?.message || "Unable to create your account. Please try again.");

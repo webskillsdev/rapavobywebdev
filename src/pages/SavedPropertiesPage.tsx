@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -5,11 +6,13 @@ import type { RootState } from "../store";
 import { useGetSavedPropertiesQuery } from "../api/propertyApi";
 import { useSaveProperty } from "../hooks/useSaveProperty";
 import DashboardShell from "../components/Layout/DashboardShell";
+import PageHeader from "../components/Layout/PageHeader";
 import Sidebar from "../components/Layout/Sidebar";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 import { ExploreSkeletonGrid } from "../components/Explore/ExploreStates";
 import { buildShareSlug } from "../utils/slug";
 import { withNext } from "../utils/redirect";
+import { positiveNumber } from "../utils/propertyFacts";
 import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
 
 const PAGE_SIZE = 9;
@@ -262,19 +265,19 @@ function SavedCard({
         </p>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
-          {!isLand && property.bedrooms != null && (
+          {!isLand && positiveNumber(property.bedrooms) && (
             <span className="flex items-center gap-1.5">
               <SvgIcon>{BED}</SvgIcon>
               {property.bedrooms}
             </span>
           )}
-          {!isLand && property.bathrooms != null && (
+          {!isLand && positiveNumber(property.bathrooms) && (
             <span className="flex items-center gap-1.5">
               <SvgIcon>{BATH}</SvgIcon>
               {property.bathrooms}
             </span>
           )}
-          {property.sqm != null && (
+          {positiveNumber(property.sqm) && (
             <span className="flex items-center gap-1.5">
               <SvgIcon>{AREA}</SvgIcon>
               {property.sqm} SQM
@@ -360,6 +363,7 @@ function Pager({
 }
 
 export default function SavedPropertiesPage() {
+  usePageMeta("Saved Properties");
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const isAgent = user?.currentMode === "agent";
   const { save } = useSaveProperty();
@@ -462,13 +466,11 @@ export default function SavedPropertiesPage() {
 
   return (
     <DashboardShell sidebar={isAgent ? <AgentSidebar /> : <Sidebar />}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        {/* Heading */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Saved Properties</h1>
-            <p className="mt-1 text-sm sm:text-base text-gray-500">Properties you've saved for later</p>
-          </div>
+      <PageHeader
+        containerClassName="max-w-7xl"
+        title="Saved Properties"
+        subtitle="Properties you've saved for later"
+        actions={
           <button
             type="button"
             disabled
@@ -481,8 +483,9 @@ export default function SavedPropertiesPage() {
             Create Folder
             <SoonChip />
           </button>
-        </div>
-
+        }
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Tabs + sort + view */}
         <div className="mt-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">

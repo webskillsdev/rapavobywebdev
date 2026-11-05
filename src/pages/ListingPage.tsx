@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
@@ -8,22 +9,9 @@ import { useSaveProperty } from "../hooks/useSaveProperty";
 import PropertyCard from "../components/PropertyCard/PropertyCard";
 import exploreHero from "../assets/explore-hero.jpg";
 import { buildShareSlug } from "../utils/slug";
+import { propertyFacts, pricePeriod } from "../utils/propertyFacts";
+import SafeImage from "../components/SafeImage";
 import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../components/Explore/ExploreStates";
-
-const categoryImages = import.meta.glob("../assets/category-*.{jpg,jpeg,png}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-const locationImages = import.meta.glob("../assets/location-*.{jpg,jpeg,png}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-function findAsset(map: Record<string, string>, slug: string): string | null {
-  const match = Object.keys(map).find((key) => key.toLowerCase().includes(`-${slug}.`));
-  return match ? map[match] : null;
-}
 
 function ArrowBadge() {
   return (
@@ -33,10 +21,6 @@ function ArrowBadge() {
       </svg>
     </span>
   );
-}
-
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "");
 }
 
 function titleCase(text: string): string {
@@ -62,10 +46,8 @@ function FeaturedCard({ property }: { property: any }) {
   return (
     <div className="rounded-xl border border-gray-200 overflow-hidden hover:shadow-sm transition">
       {savePrompt}
-      <div className="relative aspect-[4/3] bg-gray-100">
-        {property.primary_media && (
-          <img src={property.primary_media} className="h-full w-full object-cover" />
-        )}
+      <div className="relative aspect-[16/10] bg-gray-100">
+        <SafeImage src={property.primary_media} alt={property.title} className="h-full w-full object-cover" />
         {property.listing_type && (
           <span className="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">
             {property.listing_type === "sale" ? "FOR SALE" : property.listing_type.toUpperCase()}
@@ -76,25 +58,23 @@ function FeaturedCard({ property }: { property: any }) {
           onClick={handleHeartClick}
           className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/90 flex items-center justify-center"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill={property.saved ? "#16a34a" : "none"} stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill={property.saved ? "#16A34A" : "none"} stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
           </svg>
         </button>
       </div>
-      <div className="p-4">
+      <div className="p-3">
         <p className="text-green-600 font-bold">
           ₦{Number(property.price ?? 0).toLocaleString()}
-          {property.listing_type === "rent" && <span className="text-xs text-gray-400 font-normal"> /year</span>}
+          {pricePeriod(property) && <span className="text-xs text-gray-400 font-normal"> {pricePeriod(property)}</span>}
         </p>
         <p className="font-semibold text-gray-900 text-sm mt-1 truncate">{property.title}</p>
         <p className="text-xs text-gray-500">{property.location}</p>
-        {property.property_type !== "land" && (
-          <p className="text-xs text-gray-600 mt-2">
-            {property.bedrooms ?? 0} Beds · {property.bathrooms ?? 0} Baths · {property.sqm ?? 0} SQM
-          </p>
+        {property.property_type !== "land" && propertyFacts(property) && (
+          <p className="text-xs text-gray-600 mt-2">{propertyFacts(property)}</p>
         )}
         {(property.user_name || property.agent_phone) && (
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
             <span className="h-6 w-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-[10px] font-semibold">
               {(property.user_name ?? "?").charAt(0).toUpperCase()}
             </span>
@@ -103,7 +83,7 @@ function FeaturedCard({ property }: { property: any }) {
         )}
         <Link
           to={`/property/${buildShareSlug(property.title, property.id)}`}
-          className="mt-3 block text-center text-sm font-medium text-green-700 border border-green-200 rounded-md py-2 hover:bg-green-50"
+          className="mt-2 block text-center text-sm font-medium text-green-700 border border-green-200 rounded-md py-1.5 hover:bg-green-50"
         >
           View Property →
         </Link>
@@ -126,7 +106,7 @@ function Tile({
   return (
     <button type="button" onClick={onClick} className="text-left rounded-lg overflow-hidden border border-gray-200 hover:shadow-sm transition">
       <div className="relative aspect-video bg-gray-100">
-        {image && <img src={image} className="h-full w-full object-cover" />}
+        <SafeImage src={image} alt={label} className="h-full w-full object-cover" />
         <ArrowBadge />
       </div>
       <div className="p-3">
@@ -146,6 +126,7 @@ const TABS = [
 ];
 
 export default function ListingPage() {
+  usePageMeta("Explore Properties", "Search houses, apartments, land, commercial properties and shortlets across Nigeria on RAPAVO.");
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") ?? "");
@@ -171,8 +152,9 @@ export default function ListingPage() {
   const [minPrice, setMinPrice] = useState("");
   const [page, setPage] = useState(1);
   const [propertyType, setPropertyType] = useState("");
+  // A Popular Locations card that was clicked: its name and the exact listings it counted.
+  const [locationPick, setLocationPick] = useState<{ name: string; ids: string[] } | null>(null);
 
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const [showAllLocations, setShowAllLocations] = useState(false);
 
   const { data: sampleData } = useGetPropertiesQuery({ page: 1, limit: 200 });
@@ -187,17 +169,23 @@ export default function ListingPage() {
     .map(([type, count]) => ({ type, count: count as number }))
     .sort((a, b) => b.count - a.count);
 
-  const locationGroups = Object.entries(
-    sample.reduce((acc: Record<string, number>, p: any) => {
-      const name = p.lga || p.location?.split(",")[0]?.trim();
-      if (name) acc[name] = (acc[name] ?? 0) + 1;
+  // Popular Locations: count listings per area, and use the photo of the newest
+  // listing in that area as the card picture (real Rapavo photos, not stock images).
+  const locationGroups = Object.values(
+    sample.reduce((acc: Record<string, { name: string; count: number; cover: string | null; ids: string[] }>, p: any) => {
+      const name = (p.lga || p.location?.split(",")[0] || "").trim().replace(/\s+/g, " ");
+      if (!name) return acc;
+      // "Etiosa", "etiosa " and "Eti osa" are the same place: group them together.
+      const key = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const group = acc[key] ?? (acc[key] = { name, count: 0, cover: null, ids: [] });
+      group.count += 1;
+      group.ids.push(p.id);
+      if (!group.cover && p.primary_media) group.cover = p.primary_media;
       return acc;
-    }, {})
-  )
-    .map(([name, count]) => ({ name, count: count as number }))
-    .sort((a, b) => b.count - a.count);
+    }, {} as Record<string, { name: string; count: number; cover: string | null; ids: string[] }>)
+  ).sort((a, b) => b.count - a.count);
 
-  const { data, isLoading, error, refetch } = useGetPropertiesQuery({
+  const { data, isLoading, isFetching, error, refetch } = useGetPropertiesQuery({
     page,
     limit: 16,
     search,
@@ -208,11 +196,53 @@ export default function ListingPage() {
         : propertyType || undefined,
     minPrice: minPrice || undefined,
     maxPrice: maxPrice || undefined,
+    ids: locationPick?.ids,
   });
 
    const { isAuthenticated } = useSelector((state: RootStateType) => state.auth);
 
+  // After a search, scroll to the results once they have finished loading.
+  // (Scrolling straight away misses, because the page changes height while
+  // the new results load.)
+  const [scrollPending, setScrollPending] = useState(false);
+
+  useEffect(() => {
+    if (!scrollPending || isFetching) return;
+    document.getElementById("results-top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setScrollPending(false);
+  }, [scrollPending, isFetching]);
+
+  // Top search bar: runs the search when Enter or the search icon is pressed,
+  // then scrolls down to the results.
+  const [topQuery, setTopQuery] = useState(searchParams.get("q") ?? "");
+
+  function handleTopSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setLocationPick(null);
+    setSearch(topQuery.trim());
+    setPage(1);
+    setScrollPending(true);
+  }
+
+  // When the search changes from elsewhere (a location card, a ?q= link),
+  // show the same words in the top search bar.
+  useEffect(() => {
+    setTopQuery(search);
+  }, [search]);
+
+  // Hero "Search Properties": applies the type and price filters together with
+  // whatever is typed in the top search bar, then scrolls to the results.
+  function handleHeroSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setLocationPick(null);
+    setSearch(topQuery.trim());
+    setPage(1);
+    setScrollPending(true);
+  }
+
   function clearAllFilters() {
+    setLocationPick(null);
+    setTopQuery("");
     setSearch("");
     setMinPrice("");
     setMaxPrice("");
@@ -237,17 +267,26 @@ export default function ListingPage() {
     <div>
       {/* Standalone search bar, between header and hero */}
       <div className="max-w-7xl mx-auto px-6 pt-6">
-        <div className="relative">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
+        <form onSubmit={handleTopSearch} role="search" className="relative">
+          <button
+            type="submit"
+            aria-label="Search"
+            className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-green-600"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </button>
           <input
-            type="text"
+            type="search"
+            value={topQuery}
+            onChange={(e) => setTopQuery(e.target.value)}
             placeholder="Search properties, locations, agents, or keywords..."
+            aria-label="Search properties"
             className="w-full rounded-full border border-gray-200 bg-gray-50 pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-        </div>
+        </form>
       </div>
 
       {/* Hero */}
@@ -289,17 +328,7 @@ export default function ListingPage() {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <input
-                type="text"
-                placeholder="Enter location (e.g. Lekki, Ajah)"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="flex-1 min-w-[200px] rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
+            <form onSubmit={handleHeroSearch} className="flex flex-wrap gap-2">
               <select
                 value={propertyType}
                 disabled={activeTab.filterKey === "propertyType"}
@@ -307,7 +336,7 @@ export default function ListingPage() {
                   setPropertyType(e.target.value);
                   setPage(1);
                 }}
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 disabled:opacity-50"
+                className="flex-1 min-w-[160px] rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 disabled:opacity-50"
               >
                 <option value="">Any Type</option>
                 <option value="apartment">Apartment</option>
@@ -334,44 +363,19 @@ export default function ListingPage() {
                 className="w-28 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <button
-                type="button"
+                type="submit"
                 className="rounded-md bg-green-600 text-white font-semibold px-6 py-2 text-sm hover:bg-green-700"
               >
                 Search Properties
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <section className="mb-10">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">Browse by Property Type</h2>
-            <button
-              type="button"
-              onClick={() => setShowAllCategories((v) => !v)}
-              className="text-sm font-medium text-green-600 hover:underline flex items-center gap-1"
-            >
-              {showAllCategories ? "Show less" : "View all"} →
-            </button>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            {(showAllCategories ? categoryGroups : categoryGroups.slice(0, 5)).map((group) => (
-              <Tile
-                key={group.type}
-                label={titleCase(group.type)}
-                count={group.count}
-                             image={findAsset(categoryImages, slugify(group.type))}
-                onClick={() => {
-                  setPropertyType(group.type);
-                  setPage(1);
-                  document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              />
-            ))}
-          </div>
-        </section>
+        {/* 1. Latest listings first — properties straight away */}
+        <LatestSection />
 
         <section className="mb-10">
           <div className="flex items-center justify-between mb-3">
@@ -390,18 +394,48 @@ export default function ListingPage() {
                 key={group.name}
                 label={group.name}
                 count={group.count}
-                              image={findAsset(locationImages, slugify(group.name))}
+                              image={group.cover}
                 onClick={() => {
-                  setSearch(group.name);
+                  setLocationPick({ name: group.name, ids: group.ids });
+                  setSearch("");
                   setPage(1);
-                  document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
+                  setScrollPending(true);
                 }}
               />
             ))}
           </div>
         </section>
 
-        <RecommendedSection />
+        {/* 3. Property types — a compact row instead of large picture tiles */}
+        {categoryGroups.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">Browse by Property Type</h2>
+            <div className="flex flex-wrap gap-2">
+              {categoryGroups.map((group) => (
+                <button
+                  key={group.type}
+                  type="button"
+                  onClick={() => {
+                    setPropertyType(propertyType === group.type ? "" : group.type);
+                    setPage(1);
+                    setScrollPending(true);
+                  }}
+                  aria-pressed={propertyType === group.type}
+                  className={
+                    propertyType === group.type
+                      ? "rounded-full bg-green-600 text-white px-4 py-2 text-sm font-semibold"
+                      : "rounded-full bg-white border border-gray-200 text-gray-700 px-4 py-2 text-sm font-medium hover:border-green-400"
+                  }
+                >
+                  {titleCase(group.type)}
+                  <span className={propertyType === group.type ? "ml-1.5 text-white/80" : "ml-1.5 text-gray-400"}>
+                    {group.count.toLocaleString()}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="mb-10 bg-green-50 border border-green-100 rounded-xl p-6 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -410,15 +444,35 @@ export default function ListingPage() {
           </div>
           <button
             type="button"
-            onClick={() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="rounded-md bg-green-600 text-white font-semibold px-5 py-2.5 text-sm hover:bg-green-700 flex-shrink-0"
           >
             Search & Filter →
           </button>
         </section>
 
-            <RecentlyAddedSection />
-
+        <div id="results-top" className="scroll-mt-4" />
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="text-lg font-semibold text-gray-900">
+            {locationPick
+              ? `Listings in ${locationPick.name}`
+              : search || propertyType || minPrice || maxPrice
+              ? "Search Results"
+              : "All Properties"}
+          </h2>
+          {locationPick && (
+            <button
+              type="button"
+              onClick={() => {
+                setLocationPick(null);
+                setPage(1);
+              }}
+              className="rounded-full border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Show all locations
+            </button>
+          )}
+        </div>
         {isLoading && <ExploreSkeletonGrid />}
         {error ? (
           <ExploreErrorState
@@ -431,6 +485,7 @@ export default function ListingPage() {
           <ExploreEmptyState
             onClearFilters={clearAllFilters}
             onOtherLocations={() => {
+              setLocationPick(null);
               setSearch("");
               setPage(1);
               window.scrollTo({ top: 0, behavior: "smooth" });
@@ -451,6 +506,7 @@ export default function ListingPage() {
               bathrooms={property.bathrooms}
               sqm={property.sqm}
               listing_type={property.listing_type}
+              property={property}
             />
           ))}
         </div>
@@ -479,7 +535,7 @@ export default function ListingPage() {
   );
 }
 
-function RecommendedSection() {
+function LatestSection() {
   const [activeTab, setActiveTab] = useState(0);
   const { data } = useGetPropertiesQuery({ page: 1, limit: 4, ...RECOMMENDED_TABS[activeTab].filter });
   const items = data?.data ?? [];
@@ -487,7 +543,7 @@ function RecommendedSection() {
   return (
     <section className="mb-10">
       <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
-        <h2 className="text-lg font-semibold text-gray-900">Recommended for You</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Latest Properties</h2>
         <div className="flex gap-2">
           {RECOMMENDED_TABS.map((tab, i) => (
             <button
@@ -514,24 +570,6 @@ function RecommendedSection() {
           ))}
         </div>
       )}
-    </section>
-  );
-}
-
-function RecentlyAddedSection() {
-  const { data } = useGetPropertiesQuery({ page: 1, limit: 4 });
-  const items = data?.data ?? [];
-
-  if (items.length === 0) return null;
-
-  return (
-    <section className="mb-10">
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">Recently Added</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {items.map((property: any) => (
-          <FeaturedCard key={property.id} property={property} />
-        ))}
-      </div>
     </section>
   );
 }

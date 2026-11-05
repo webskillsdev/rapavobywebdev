@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import AuthListener from "./components/AuthListener";
+import ScrollToTop from "./components/ScrollToTop";
 import ListingPage from "./pages/ListingPage";
 import PropertyDetailsPage from "./pages/PropertyDetailsPage";
 import PublicPropertyPage from "./pages/PublicPropertyPage";
@@ -26,6 +27,7 @@ import CardPreviewPage from "./pages/CardPreviewPage";
 function App() {
   return (
     <AuthListener>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<ListingPage />} />

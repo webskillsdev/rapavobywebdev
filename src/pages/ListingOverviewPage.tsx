@@ -7,6 +7,7 @@ import { buildShareSlug } from "../utils/slug";
 import DashboardShell from "../components/Layout/DashboardShell";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
+import { useBrandedDialog } from "../components/BrandedDialog";
 
 const TABS = ["Overview", "Details", "Location", "Media"];
 const SOON_TABS = ["AI Content", "Documents"];
@@ -19,6 +20,7 @@ export default function ListingOverviewPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [deleteProperty] = useDeletePropertyMutation();
   const [shareOpen, setShareOpen] = useState(false);
+  const { confirm, notify, dialog } = useBrandedDialog();
 
   const { data, isLoading, error } = useGetSinglePropertyQuery(id as string, {
     skip: !isAuthenticated,
@@ -41,6 +43,18 @@ export default function ListingOverviewPage() {
   const property = data?.data;
   if (!property) return <p className="max-w-5xl mx-auto px-6 py-10 text-gray-500">Listing not found.</p>;
 
+  // Only the agent who owns this listing may manage it.
+  if (property.owner_id !== user.uid) {
+    return (
+      <div className="max-w-md mx-auto px-6 py-16 text-center">
+        <p className="text-gray-900 font-semibold mb-1">This isn't your listing</p>
+        <p className="text-gray-600 text-sm mb-4">Only the agent who posted it can manage it.</p>
+        <Link to="/my-listings" className="text-green-600 font-medium hover:underline">
+          Go to My Listings
+        </Link>
+      </div>
+    );
+  }
        const images = [...(property.property_media ?? [])].sort((a: any, b: any) => {
       if (a.media_type === "video" && b.media_type !== "video") return -1;
       if (a.media_type !== "video" && b.media_type === "video") return 1;
@@ -49,13 +63,34 @@ export default function ListingOverviewPage() {
   const thumbs = images.filter((_: any, i: number) => i !== activeImage).slice(0, 6);
   const extraCount = images.length - 1 - thumbs.length;
   async function handleDelete() {
-    if (!window.confirm(`Delete "${property.title}"? This can't be undone.`)) return;
-    await deleteProperty(property.id);
+    const ok = await confirm({
+      tone: "danger",
+      title: "Delete this listing?",
+      message: (
+        <>
+          Are you sure you want to delete <span className="font-semibold text-green-700">"{property.title}"</span>?
+        </>
+      ),
+      detail: "This action cannot be undone. Once deleted, this property listing will be permanently removed from your Rapavo account.",
+      confirmLabel: "Delete Listing",
+      cancelLabel: "Keep Listing",
+    });
+    if (!ok) return;
+    const result: any = await deleteProperty(property.id);
+    if (result?.error) {
+      notify({
+        tone: "error",
+        title: "Listing not deleted",
+        message: "We couldn't delete this listing. Please check your connection and try again.",
+      });
+      return;
+    }
     navigate("/my-listings");
   }
 
   return (
     <DashboardShell sidebar={<AgentSidebar />}>
+      {dialog}
     <div className="flex flex-col lg:flex-row gap-6 px-6 py-8">
         {/* Main column */}
         <div className="flex-1 min-w-0">

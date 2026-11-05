@@ -841,7 +841,9 @@ toggleSavedProperty: builder.mutation({
         maxPrice,
         bedrooms,
         bathrooms,
+        minSqm,
         amenities,
+        ids,
         sort,
       }) {
         try {
@@ -862,9 +864,28 @@ toggleSavedProperty: builder.mutation({
             query = query.order("created_at", { ascending: false });
           }
 
-          if (search) {
+          // Commas and brackets would break the search filter (e.g. "Lekki, Lagos"),
+          // so they are turned into spaces first.
+          const term = search.replace(/[%,()]/g, " ").replace(/\s+/g, " ").trim();
+
+          if (term) {
+            // Agent names live on the agent's profile, not on the listing:
+            // find agents whose name or company matches, then include their listings.
+            let agentFilter = "";
+            if (term.length >= 2) {
+              const { data: agents } = await supabase
+                .from("profiles")
+                .select("id")
+                .or(`full_name.ilike.%${term}%,company_name.ilike.%${term}%`)
+                .limit(50);
+              const agentIds = (agents ?? []).map((a: any) => a.id).filter(Boolean);
+              if (agentIds.length > 0) {
+                agentFilter = `,owner_id.in.(${agentIds.join(",")})`;
+              }
+            }
+
             query = query.or(
-              `title.ilike.%${search}%,description.ilike.%${search}%,location.ilike.%${search}%`,
+              `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%,estate.ilike.%${term}%,area.ilike.%${term}%,lga.ilike.%${term}%${agentFilter}`,
             );
           }
 
@@ -879,6 +900,9 @@ toggleSavedProperty: builder.mutation({
           if (maxPrice) query = query.lte("price", maxPrice);
           if (bedrooms) query = query.gte("bedrooms", bedrooms);
           if (bathrooms) query = query.gte("bathrooms", bathrooms);
+          if (minSqm) query = query.gte("sqm", minSqm);
+          // A location card: show exactly the listings that card counted.
+          if (ids && ids.length > 0) query = query.in("id", ids);
           if (amenities && amenities.length > 0) {
             query = query.overlaps("amenities", amenities);
           }

@@ -1,9 +1,11 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { RootState } from "../store";
 import { useGetUserProfileQuery, useUpdateProfileMutation } from "../api/userApi";
 import DashboardShell from "../components/Layout/DashboardShell";
+import PageHeader from "../components/Layout/PageHeader";
 import Sidebar from "../components/Layout/Sidebar";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 
@@ -26,6 +28,7 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
 }
 
 export default function ProfilePage() {
+  usePageMeta("Profile");
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const isAgent = user?.currentMode === "agent";
 
@@ -137,15 +140,16 @@ export default function ProfilePage() {
 
   return (
     <DashboardShell sidebar={isAgent ? <AgentSidebar /> : <Sidebar />}>
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          {isAgent ? "Agent Profile" : "Profile"}
-        </h1>
-        <p className="text-sm text-gray-500 mb-6">
-          {isAgent
+      <PageHeader
+        containerClassName="max-w-2xl"
+        title={isAgent ? "Agent Profile" : "Profile"}
+        subtitle={
+          isAgent
             ? "This is how buyers see you across your listings."
-            : "Update your personal details."}
-        </p>
+            : "Update your personal details."
+        }
+      />
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
 
         {isLoading || !loaded ? (
           <p className="text-sm text-gray-500">Loading profile...</p>

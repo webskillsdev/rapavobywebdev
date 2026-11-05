@@ -1,22 +1,14 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useGetPropertiesQuery } from "../api/propertyApi";
 import { useSaveProperty } from "../hooks/useSaveProperty";
 import { buildShareSlug } from "../utils/slug";
+import { propertyFacts, pricePeriod } from "../utils/propertyFacts";
+import SafeImage from "../components/SafeImage";
 import type { RootState } from "../store";
-const locationImages = import.meta.glob("../assets/location-*.{jpg,jpeg,png}", {
-  eager: true,
-  import: "default",
-}) as Record<string, string>;
-
-function findLocationImage(name: string): string | null {
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "");
-  const match = Object.keys(locationImages).find((key) => key.toLowerCase().includes(`-${slug}.`));
-  return match ? locationImages[match] : null;
-}
-
 import DashboardShell from "../components/Layout/DashboardShell";
+import PageHeader from "../components/Layout/PageHeader";
 import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../components/Explore/ExploreStates";
 import Sidebar from "../components/Layout/Sidebar";
 import AgentSidebar from "../components/Layout/AgentSidebar";
@@ -57,10 +49,8 @@ function ExploreCard({ property }: { property: any }) {
   return (
     <div className="rounded-xl border border-gray-200 overflow-hidden hover:shadow-sm transition">
       {savePrompt}
-      <div className="relative aspect-[4/3] bg-gray-100">
-        {property.primary_media && (
-          <img src={property.primary_media} className="h-full w-full object-cover" />
-        )}
+      <div className="relative aspect-[16/10] bg-gray-100">
+        <SafeImage src={property.primary_media} alt={property.title} className="h-full w-full object-cover" />
         {property.listing_type && (
           <span className="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">
             {property.listing_type === "sale" ? "FOR SALE" : property.listing_type.toUpperCase()}
@@ -76,11 +66,11 @@ function ExploreCard({ property }: { property: any }) {
           </svg>
         </button>
       </div>
-      <div className="p-4">
+       <div className="p-3">
         <div className="flex items-center gap-2">
           <p className="text-green-600 font-bold">
             ₦{Number(property.price ?? 0).toLocaleString()}
-            {property.listing_type === "rent" && <span className="text-xs text-gray-400 font-normal"> /year</span>}
+        {pricePeriod(property) && <span className="text-xs text-gray-400 font-normal"> {pricePeriod(property)}</span>}
           </p>
           {property.agent_verified && (
             <span className="flex items-center gap-1 text-[10px] font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded-full">
@@ -93,13 +83,11 @@ function ExploreCard({ property }: { property: any }) {
         </div>
         <p className="font-semibold text-gray-900 text-sm mt-1 truncate">{property.title}</p>
         <p className="text-xs text-gray-500">{property.location}</p>
-        {property.property_type !== "land" && (
-          <p className="text-xs text-gray-600 mt-2">
-            {property.bedrooms ?? 0} Beds · {property.bathrooms ?? 0} Baths · {property.sqm ?? 0} SQM
-          </p>
+        {property.property_type !== "land" && propertyFacts(property) && (
+          <p className="text-xs text-gray-600 mt-2">{propertyFacts(property)}</p>
         )}
         {property.user_name && (
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
             <span className="h-6 w-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-[10px] font-semibold">
               {property.user_name.charAt(0).toUpperCase()}
             </span>
@@ -108,7 +96,7 @@ function ExploreCard({ property }: { property: any }) {
         )}
         <Link
           to={`/property/${buildShareSlug(property.title, property.id)}`}
-          className="mt-3 block text-center text-sm font-medium text-green-700 border border-green-200 rounded-md py-2 hover:bg-green-50"
+          className="mt-2 block text-center text-sm font-medium text-green-700 border border-green-200 rounded-md py-1.5 hover:bg-green-50"
         >
           View Property →
         </Link>
@@ -123,7 +111,7 @@ interface ExploreLoggedInProps {
   activeTab: (typeof TABS)[number];
   setActiveTab: (t: (typeof TABS)[number]) => void;
   setPage: (p: number) => void;
-  locationGroups: { name: string; count: number }[];
+  locationGroups: { name: string; count: number; cover: string | null; ids: string[] }[];
 }
 
 export default function ExploreLoggedIn({
@@ -140,9 +128,22 @@ export default function ExploreLoggedIn({
 
   // If the search text is changed from outside (e.g. the top-bar search),
   // jump back to page 1 so the new results don't open on an empty page.
+  // What the user is typing; the search only runs on Enter or the Search button.
+  const [query, setQuery] = useState(search);
+
   useEffect(() => {
     setLocalPage(1);
+    setQuery(search);
   }, [search]);
+
+  function handleSearchSubmit(e: FormEvent) {
+    e.preventDefault();
+    setLocationPick(null);
+    setSearch(query.trim());
+    setLocalPage(1);
+    setPage(1);
+    setScrollPending(true);
+  }
   const [view, setView] = useState<"list" | "map">("list");
 
    const [showAllSuggested, setShowAllSuggested] = useState(false);
@@ -153,6 +154,8 @@ export default function ExploreLoggedIn({
   const [minSqm, setMinSqm] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [specificType, setSpecificType] = useState("");
+  // A Suggested Locations card that was clicked: its name and the exact listings it counted.
+  const [locationPick, setLocationPick] = useState<{ name: string; ids: string[] } | null>(null);
 
   function toggleAmenity(item: string) {
     setSelectedAmenities((prev) =>
@@ -161,7 +164,7 @@ export default function ExploreLoggedIn({
     setLocalPage(1);
   }
 
-  const { data, isLoading, error, refetch } = useGetPropertiesQuery({
+  const { data, isLoading, isFetching, error, refetch } = useGetPropertiesQuery({
     page: localPage,
     limit: 12,
     search,
@@ -171,14 +174,27 @@ export default function ExploreLoggedIn({
     maxPrice: maxPrice || undefined,
     bedrooms: bedrooms && bedrooms !== "Any" ? bedrooms.replace("+", "") : undefined,
     bathrooms: bathrooms && bathrooms !== "Any" ? bathrooms.replace("+", "") : undefined,
+    minSqm: minSqm || undefined,
     amenities: selectedAmenities.length > 0 ? selectedAmenities : undefined,
+    ids: locationPick?.ids,
     sort,
   });
 
   const items = data?.data ?? [];
   const total = data?.total ?? 0;
 
+  // After a search, scroll to the results once they have finished loading.
+  const [scrollPending, setScrollPending] = useState(false);
+
+  useEffect(() => {
+    if (!scrollPending || isFetching) return;
+    document.getElementById("results-top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setScrollPending(false);
+  }, [scrollPending, isFetching]);
+
   function clearAllFilters() {
+    setLocationPick(null);
+    setQuery("");
     setSearch("");
     setMinPrice("");
     setMaxPrice("");
@@ -199,20 +215,13 @@ export default function ExploreLoggedIn({
   return (
     <DashboardShell sidebar={user?.currentMode === "agent" ? <AgentSidebar /> : <Sidebar />}>
       <div>
-        <div className="bg-green-50">
-          <div className="px-6 pt-8 pb-6 flex items-start justify-between flex-wrap gap-4">
-            <div>
-              <p className="text-xs text-gray-400 mb-1">Explore &gt; Search</p>
-              <h1 className="text-4xl font-extrabold text-gray-900 leading-none">Search Properties</h1>
-              <p className="text-sm text-gray-500 -mt-5 leading-snug">Find your ideal property with powerful filters.</p>
-            </div>
-            <p className="text-lg text-green-600" style={{ fontFamily: "'Caveat', cursive" }}>
-              Better Properties
-              <br />
-              Brighter Futures
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          size="large"
+          breadcrumb="Explore > Search"
+          title="Search Properties"
+          subtitle="Find your ideal property with powerful filters."
+          tagline={["Better Properties", "Brighter Futures"]}
+        />
 
         <div className="px-6 py-6">
           <div className="flex gap-2 mb-4 overflow-x-auto">
@@ -236,7 +245,7 @@ export default function ExploreLoggedIn({
             ))}
           </div>
 
-          <div className="flex gap-2 mb-4">
+          <form onSubmit={handleSearchSubmit} role="search" className="flex gap-2 mb-4">
             <div className="relative flex-1">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                 <circle cx="11" cy="11" r="8" />
@@ -245,17 +254,13 @@ export default function ExploreLoggedIn({
               <input
                 type="text"
                 placeholder="Enter location (e.g. Lekki, Ajah, Ikoyi)..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setLocalPage(1);
-                  setPage(1);
-                }}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 className="w-full rounded-md border border-gray-300 pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
             <button
-              type="button"
+              type="submit"
               className="rounded-md bg-green-600 text-white font-semibold px-6 py-2.5 text-sm hover:bg-green-700 flex items-center gap-2"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -264,7 +269,7 @@ export default function ExploreLoggedIn({
               </svg>
               Search
             </button>
-          </div>
+          </form>
 
           <div className="flex items-center gap-2 mb-6">
             <span
@@ -275,7 +280,26 @@ export default function ExploreLoggedIn({
             </span>
           </div>
 
-                {locationGroups.length > 0 && (
+                {/* While a search is active, show what was searched instead of location suggestions. */}
+                {(search || locationPick) && (
+            <div className="mb-6 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-gray-600">
+                {locationPick ? "Showing listings in " : "Showing results for "}
+                <span className="font-semibold text-gray-900">
+                  {locationPick ? locationPick.name : `"${search}"`}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={clearAllFilters}
+                className="rounded-full border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Clear search
+              </button>
+            </div>
+                )}
+
+                {locationGroups.length > 0 && !search && !locationPick && (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-base font-bold text-gray-900">Suggested Locations</p>
@@ -291,13 +315,14 @@ export default function ExploreLoggedIn({
               </div>
               <div className={showAllSuggested ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" : "flex gap-3 overflow-x-auto pb-1"}>
                 {(showAllSuggested ? locationGroups : locationGroups.slice(0, 6)).map((loc) => {
-                  const image = findLocationImage(loc.name);
+const image = loc.cover;
                   return (
                     <button
                       key={loc.name}
                       type="button"
                       onClick={() => {
-                        setSearch(loc.name);
+                        setLocationPick({ name: loc.name, ids: loc.ids });
+                        setSearch("");
                         setLocalPage(1);
                         setPage(1);
                       }}
@@ -308,7 +333,7 @@ export default function ExploreLoggedIn({
                       }
                     >
                       <div className="aspect-video bg-gray-100">
-                        {image && <img src={image} className="h-full w-full object-cover" />}
+                        <SafeImage src={image} alt={loc.name} className="h-full w-full object-cover" />
                       </div>
                       <div className="p-3">
                         <p className="text-sm font-semibold text-gray-900">{loc.name}</p>
@@ -324,6 +349,7 @@ export default function ExploreLoggedIn({
           <div className="flex gap-6">
             {/* Main column */}
             <div className="flex-1 min-w-0">
+              <div id="results-top" className="scroll-mt-4" />
               <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
                 <div className="flex gap-2">
                   <button
@@ -524,7 +550,8 @@ export default function ExploreLoggedIn({
                     type="number"
                     placeholder="Any"
                     value={minSqm}
-                    onChange={(e) => setMinSqm(e.target.value)}
+                    min={0}
+                    onChange={(e) => { setMinSqm(e.target.value); setLocalPage(1); }}
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>

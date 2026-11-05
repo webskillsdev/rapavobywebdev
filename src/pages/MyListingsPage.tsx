@@ -1,17 +1,23 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { RootState } from "../store";
 import { useGetMyPropertiesQuery, useDeletePropertyMutation } from "../api/propertyApi";
 import DashboardShell from "../components/Layout/DashboardShell";
+import PageHeader from "../components/Layout/PageHeader";
+import { useBrandedDialog } from "../components/BrandedDialog";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
+import { pricePeriod } from "../utils/propertyFacts";
 
 export default function MyListingsPage() {
+  usePageMeta("My Listings");
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const [search, setSearch] = useState("");
   const [activeStatus, setActiveStatus] = useState("all");
   const [deleteProperty] = useDeletePropertyMutation();
+  const { confirm, notify, dialog } = useBrandedDialog();
   const [sharing, setSharing] = useState<any>(null);
 
   const { data, isLoading, error } = useGetMyPropertiesQuery(undefined, {
@@ -54,25 +60,45 @@ export default function MyListingsPage() {
   const totalSaves = listings.reduce((sum, p) => sum + (p.favorite_count ?? 0), 0);
 
   async function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
-    await deleteProperty(id);
+    const ok = await confirm({
+      tone: "danger",
+      title: "Delete this listing?",
+      message: (
+        <>
+          Are you sure you want to delete <span className="font-semibold text-green-700">"{title}"</span>?
+        </>
+      ),
+      detail: "This action cannot be undone. Once deleted, this property listing will be permanently removed from your Rapavo account.",
+      confirmLabel: "Delete Listing",
+      cancelLabel: "Keep Listing",
+    });
+    if (!ok) return;
+    const result: any = await deleteProperty(id);
+    if (result?.error) {
+      notify({
+        tone: "error",
+        title: "Listing not deleted",
+        message: "We couldn't delete this listing. Please check your connection and try again.",
+      });
+    }
   }
 
   return (
     <DashboardShell sidebar={<AgentSidebar />}>
-      <div className="px-6 py-8">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Listings</h1>
-            <p className="text-gray-500 mt-1">Manage, track and grow your property listings.</p>
-          </div>
+      {dialog}
+      <PageHeader
+        title="My Listings"
+        subtitle="Manage, track and grow your property listings."
+        actions={
           <Link
             to="/post-property"
             className="rounded-md bg-green-600 text-white font-semibold px-4 py-2 text-sm hover:bg-green-700"
           >
             + Post a Property
           </Link>
-        </div>
+        }
+      />
+      <div className="px-4 sm:px-6 py-2">
 
         {/* Real stats only — no fabricated "Enquiries" number */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
@@ -156,7 +182,7 @@ export default function MyListingsPage() {
                 </div>
                 <p className="text-green-600 font-bold mt-1">
                   ₦{Number(property.price ?? 0).toLocaleString()}
-                  {property.listing_type === "rent" && <span className="text-xs text-gray-400"> /year</span>}
+{pricePeriod(property) && <span className="text-xs text-gray-400"> {pricePeriod(property)}</span>}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-2">
                   {property.property_type !== "land" && (

@@ -31,13 +31,7 @@ function Header() {
 
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
                 <Link
-          to={
-            !isAuthenticated
-              ? "/"
-              : user?.currentMode === "agent"
-              ? "/agent-dashboard"
-              : "/dashboard"
-          }
+          to={isAuthenticated ? "/feed" : "/"}
           className="hover:text-green-600"
         >
           Home

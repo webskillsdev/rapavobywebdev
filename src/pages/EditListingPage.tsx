@@ -5,6 +5,8 @@ import type { RootState } from "../store";
 import { useGetSinglePropertyQuery, useUpdatePropertyMutation } from "../api/propertyApi";
 import type { MediaItem } from "../lib/uploadMedia";
 import WizardStepper from "../components/PostPropertyWizard/WizardStepper";
+import { useBrandedDialog } from "../components/BrandedDialog";
+import { friendlyError } from "../utils/friendlyError";
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
@@ -124,6 +126,7 @@ export default function EditListingPage() {
   const [videoLink, setVideoLink] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const { notify, dialog } = useBrandedDialog();
 
   useEffect(() => {
     const property = data?.data;
@@ -182,6 +185,19 @@ export default function EditListingPage() {
 
   const property = data?.data;
   if (!property) return <p className="max-w-6xl mx-auto px-6 py-10 text-gray-500">Listing not found.</p>;
+
+  // Only the agent who owns this listing may manage it.
+  if (property.owner_id !== user.uid) {
+    return (
+      <div className="max-w-md mx-auto px-6 py-16 text-center">
+        <p className="text-gray-900 font-semibold mb-1">This isn't your listing</p>
+        <p className="text-gray-600 text-sm mb-4">Only the agent who posted it can manage it.</p>
+        <Link to="/my-listings" className="text-green-600 font-medium hover:underline">
+          Go to My Listings
+        </Link>
+      </div>
+    );
+  }
 
   const isLand = category === "land";
 
@@ -274,7 +290,9 @@ export default function EditListingPage() {
       await updateProperty({ propertyId: id, updates, mediaItems, removedImages }).unwrap();
       navigate(`/my-listings/${id}`);
     } catch (err: any) {
-      setSubmitError(err?.message || "Something went wrong saving your changes.");
+      const problem = friendlyError(err, "save your changes");
+      setSubmitError(`${problem.title}. ${problem.detail}`);
+      notify({ tone: "error", ...problem, confirmLabel: "OK, I'll fix it" });
     } finally {
       setSubmitting(false);
     }
@@ -338,6 +356,7 @@ export default function EditListingPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
+      {dialog}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <button

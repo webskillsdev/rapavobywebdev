@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState, type ChangeEvent, type ReactNode, type InputHTMLAttributes, type SelectHTMLAttributes } from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
@@ -5,6 +6,8 @@ import type { RootState } from "../store";
 import { useCreatePropertyMutation } from "../api/propertyApi";
 import type { MediaItem } from "../lib/uploadMedia";
 import WizardStepper from "../components/PostPropertyWizard/WizardStepper";
+import { useBrandedDialog } from "../components/BrandedDialog";
+import { friendlyError } from "../utils/friendlyError";
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
@@ -62,6 +65,7 @@ const CATEGORIES = [
 const STEPS = ["Property Type", "Details", "Location", "Media", "Review", "Complete"];
 
 export default function PostPropertyPage() {
+  usePageMeta("Post a Property");
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const [createProperty, { isLoading: submitting }] = useCreatePropertyMutation();
 
@@ -99,6 +103,7 @@ export default function PostPropertyPage() {
   const [agentName, setAgentName] = useState(user?.fullName ?? "");
   const [agentPhone, setAgentPhone] = useState(user?.phoneNumber ?? "");
   const [submitError, setSubmitError] = useState("");
+  const { notify, dialog } = useBrandedDialog();
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files) setPhotoFiles(Array.from(e.target.files));
@@ -176,14 +181,23 @@ export default function PostPropertyPage() {
         : listingType === "shortlet"
         ? { price_duration: "night" }
         : {}),
-      ...(isLand ? {} : { bedrooms, bathrooms, sqm }),
+      // Number boxes left empty are not sent (an empty value breaks the database).
+      ...(isLand
+        ? {}
+        : {
+            ...(bedrooms !== "" ? { bedrooms } : {}),
+            ...(bathrooms !== "" ? { bathrooms } : {}),
+            ...(sqm !== "" ? { sqm } : {}),
+          }),
     };
 
     try {
       await createProperty({ propertyData, mediaItems }).unwrap();
       setStep(6);
     } catch (err: any) {
-      setSubmitError(err?.message || "Something went wrong creating your listing.");
+      const problem = friendlyError(err, "submit your listing");
+      setSubmitError(`${problem.title}. ${problem.detail}`);
+      notify({ tone: "error", ...problem, confirmLabel: "OK, I'll fix it" });
     }
   }
   const [stepError, setStepError] = useState("");
@@ -242,7 +256,8 @@ export default function PostPropertyPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-8">
+       <div className="max-w-3xl mx-auto px-6 py-8">
+      {dialog}
       <h1 className="text-2xl font-bold text-gray-900 mb-2">List a Property</h1>
       <p className="text-gray-500 mb-6">Step {step} of 6</p>
 

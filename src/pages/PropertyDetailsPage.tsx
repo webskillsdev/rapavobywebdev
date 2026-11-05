@@ -1,3 +1,4 @@
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useState, type ReactNode } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -8,6 +9,7 @@ import { useSaveProperty } from "../hooks/useSaveProperty";
 import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
 import { extractIdFromSlug, buildShareSlug } from "../utils/slug";
 import { toWhatsAppNumber, whatsappLink } from "../utils/contact";
+import { positiveNumber } from "../utils/propertyFacts";
 const AMENITY_ICONS: Record<string, ReactNode> = {
   "Swimming Pool": <path d="M2 12h20M2 17h20M7 7a3 3 0 0 1 3-3c1.5 0 2 1 3 1s1.5-1 3-1a3 3 0 0 1 3 3" />,
   "Fitted Kitchen": <><path d="M4 3h16v18H4z" /><path d="M4 10h16M9 3v7" /></>,
@@ -43,6 +45,13 @@ export default function PropertyDetailsPage() {
   const [shareOpen, setShareOpen] = useState(false);
 
   const { data, isLoading, error } = useGetSinglePropertyQuery(id as string);
+  const metaProperty = data?.data;
+  usePageMeta(
+    metaProperty?.title,
+    metaProperty
+      ? `${metaProperty.title} in ${metaProperty.location} — ₦${Number(metaProperty.price ?? 0).toLocaleString()} on RAPAVO.`
+      : null,
+  );
 
   if (isLoading) {
     return <p className="max-w-5xl mx-auto px-6 py-10 text-gray-500">Loading property...</p>;
@@ -163,9 +172,9 @@ export default function PropertyDetailsPage() {
 
             {/* Specs */}
       <div className="flex gap-6 mt-4 py-4 border-y border-gray-100 text-sm text-gray-700">
-        {property.bedrooms != null && <span>{property.bedrooms} Beds</span>}
-        {property.bathrooms != null && <span>{property.bathrooms} Baths</span>}
-        {property.sqm != null && <span>{property.sqm} SQM</span>}
+        {positiveNumber(property.bedrooms) && <span>{property.bedrooms} Beds</span>}
+        {positiveNumber(property.bathrooms) && <span>{property.bathrooms} Baths</span>}
+        {positiveNumber(property.sqm) && <span>{property.sqm} SQM</span>}
       </div>
 
       {/* Description */}
