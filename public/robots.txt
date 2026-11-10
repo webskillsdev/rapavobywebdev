@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Private, logged-in pages: nothing useful for search engines
+Disallow: /my-listings
+Disallow: /post-property
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /agent-dashboard
+Disallow: /saved
+Disallow: /feed
+Disallow: /verification
+Disallow: /become-agent
+Disallow: /auth/
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /card-preview
+
+Sitemap: https://rapavo.com/sitemap.xml
