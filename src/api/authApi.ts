@@ -45,7 +45,6 @@ emailRedirectTo: redirectQuery ? `${redirectBase}?${redirectQuery}` : redirectBa
             },
           };
         } catch (err: any) {
-          console.log(">>>>>>errors", err);
 
           return {
             error: {
@@ -68,7 +67,6 @@ emailRedirectTo: redirectQuery ? `${redirectBase}?${redirectQuery}` : redirectBa
           });
 
           if (error) {
-            console.log(">>>>>> login errors", error);
 
             return {
               error: {
@@ -86,8 +84,6 @@ emailRedirectTo: redirectQuery ? `${redirectBase}?${redirectQuery}` : redirectBa
               },
             };
           }
-
-          console.log(">>>>>> logged in user", data.user.id);
 
           // 2. Check whether the account is pending deletion
           const { data: profile, error: profileError } = await supabase
@@ -110,8 +106,6 @@ emailRedirectTo: redirectQuery ? `${redirectBase}?${redirectQuery}` : redirectBa
               },
             };
           }
-
-          console.log(">>>>>profile", profile);
 
           // 3. Block accounts pending deletion
           if (profile?.deletion_requested_at) {

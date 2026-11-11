@@ -141,8 +141,6 @@ export const requestApi = api.injectEndpoints({
     }),
     SaveRequest: builder.mutation({
       async queryFn({ request_id }, api) {
-        console.log("??????????", request_id);
-
         try {
           const state = api.getState() as any;
           const user = state.auth.user;

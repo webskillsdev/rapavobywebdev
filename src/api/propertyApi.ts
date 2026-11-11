@@ -909,8 +909,6 @@ toggleSavedProperty: builder.mutation({
 
           const { data, error, count } = await query;
 
-          console.log(">>>>getProperties", { data, error, count });
-
           if (error) {
             return { error: { success: false, message: error.message } };
           }
@@ -1178,8 +1176,6 @@ toggleSavedProperty: builder.mutation({
           const state = api.getState() as any;
 
           const currentUser = state.auth.user;
-
-          console.log(">>>>>>currentUser", currentUser?.uid);
 
           if (!currentUser) {
             return {
