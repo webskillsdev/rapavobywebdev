@@ -8,6 +8,10 @@
   RewriteRule ^Contact_us\.html$ /contact/ [R=301,L]
   RewriteRule ^privacy\.html$ /privacy/ [R=301,L]
 
+  # Property links -> share.php, which adds the property photo, title and
+  # price so WhatsApp/Facebook previews show the property, not the logo
+  RewriteRule ^(share|property)/[^/]+/?$ /share.php [L]
+
   # Serve real files and real folders (about/, contact/ ...) as they are
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
