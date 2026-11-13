@@ -10,7 +10,7 @@ import { propertyFacts, pricePeriod } from "../utils/propertyFacts";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import DashboardShell from "../components/Layout/DashboardShell";
-import PageHeader from "../components/Layout/PageHeader";
+import feedHero from "../assets/feed-hero.jpg";
 import Sidebar from "../components/Layout/Sidebar";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 const TABS = [
@@ -51,14 +51,30 @@ export default function FeedPage() {
 
   const content = (
     <div>
-      <PageHeader
-        size="large"
-        containerClassName="max-w-6xl"
-        breadcrumb="Home > Feed"
-        title="My Feed"
-        subtitle="Fresh listings and updates from agents across Rapavo."
-        tagline={["Fresh Listings", "Every Day"]}
-      />
+      {/* Hero banner */}
+      <section
+        className="relative overflow-hidden border-b border-green-100 bg-white bg-cover bg-no-repeat bg-[position:70%_center] sm:bg-[position:right_45%]"
+        style={{ backgroundImage: `url(${feedHero})` }}
+      >
+        {/* Soft white fade on the left so the text is always easy to read */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/30 sm:from-white/90 sm:via-white/40 sm:to-transparent"
+        />
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 min-h-[220px] sm:min-h-[340px] flex flex-col justify-center">
+          <p className="text-xs text-gray-500 mb-2">Home &gt; Feed</p>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight">My Feed</h1>
+          <p
+            className="mt-1 text-2xl sm:text-3xl text-green-700 leading-tight"
+            style={{ fontFamily: "'Caveat', cursive" }}
+          >
+            Fresh listings, every day
+          </p>
+          <p className="mt-3 max-w-md text-sm sm:text-base text-gray-700">
+            Fresh listings and updates from agents across Rapavo.
+          </p>
+        </div>
+      </section>
 
       <div className="max-w-6xl mx-auto px-6 py-8 flex gap-6">
         {savePrompt}

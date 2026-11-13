@@ -4,6 +4,7 @@ import { api } from "../store/base";
 import { HIGH_PRIORITY_SCORE, scoreMatch } from "../utils/matchingEngine";
 import { extractPricePrefix, isPriceQuery, parsePrice } from "../utils/priceFormatter";
 import type { FeedItem, GetFeedsParams, MatchingBuyerRequest } from "../utils/type";
+import { videoOnlyCover } from "../utils/videoThumbnail";
 
 
 export const propertyApi = api.injectEndpoints({
@@ -124,6 +125,16 @@ export const propertyApi = api.injectEndpoints({
 
           const enrichedData = data?.map((item) => ({
             ...item,
+            // Video-only listing: use a still from the video. Listings with photos are unchanged.
+            primary_media:
+              (item.item_type === "property" &&
+                videoOnlyCover(
+                  (Array.isArray(item.media_urls) && item.media_urls.length > 0
+                    ? item.media_urls
+                    : [item.primary_media]
+                  ).map((url: string) => ({ media_url: url })),
+                )) ||
+              item.primary_media,
             saved:
               currentUser?.uid && item.item_type === "property"
                 ? savedPropertyIds.has(item.id)
@@ -923,12 +934,16 @@ toggleSavedProperty: builder.mutation({
               property.cover_url ||
               null;
 
-            const primaryMedia = coverUrl
-              ? coverUrl.replace(
-                  "/upload/",
-                  "/upload/w_600,h_400,c_fill,q_auto,f_auto/",
-                )
-              : null;
+            // Video-only listing: use a still from the video (see utils/videoThumbnail.ts).
+            // Listings with photos are unchanged.
+            const primaryMedia =
+              videoOnlyCover(media) ??
+              (coverUrl
+                ? coverUrl.replace(
+                    "/upload/",
+                    "/upload/w_600,h_400,c_fill,q_auto,f_auto/",
+                  )
+                : null);
 
             const mediaUrls = media
               .sort((a: any) => (a.is_cover ? -1 : 1))
@@ -1132,6 +1147,9 @@ toggleSavedProperty: builder.mutation({
             saved_at: item.created_at,
             primary_media: (() => {
               const media = item.properties.property_media ?? [];
+              // Video-only listing: use a still from the video. Listings with photos are unchanged.
+              const videoCover = videoOnlyCover(media);
+              if (videoCover) return videoCover;
               const image =
                 media.find((m: any) => m.is_cover && m.media_type !== "video") ??
                 media.find((m: any) => m.media_type !== "video");
@@ -1478,6 +1496,7 @@ toggleSavedProperty: builder.mutation({
             );
 
             const coverImage =
+              videoOnlyCover(best.property.property_media) ??
               best.property.property_media?.find((m: any) => m.is_cover)
                 ?.media_url ??
               best.property.property_media?.[0]?.media_url ??
@@ -1623,6 +1642,7 @@ toggleSavedProperty: builder.mutation({
               const mediaUrls =
                 property.property_media?.map((m: any) => m.media_url) ?? [];
               const coverImage =
+                videoOnlyCover(property.property_media) ??
                 property.property_media?.find((m: any) => m.is_cover)
                   ?.media_url ??
                 mediaUrls[0] ??

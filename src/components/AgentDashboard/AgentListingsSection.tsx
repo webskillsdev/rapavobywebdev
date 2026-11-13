@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDeletePropertyMutation } from "../../api/propertyApi";
 import SharePropertySheet from "../share-sheet/SharePropertySheet";
 import SafeImage from "../SafeImage";
+import { videoOnlyCover } from "../../utils/videoThumbnail";
 import { useBrandedDialog } from "../BrandedDialog";
 
 function badgeFor(listingType?: string): { label: string; color: string } {
@@ -24,6 +25,7 @@ function ListingCard({
   const media: any[] = property.property_media ?? [];
   const photos = media.filter((m) => m.media_type !== "video");
   const cover: string | null =
+    videoOnlyCover(media) ??
     property.cover_url ??
     photos.find((m) => m.is_cover)?.media_url ??
     photos[0]?.media_url ??

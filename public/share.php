@@ -98,18 +98,42 @@ function rapavo_pick_image(array $media)
     if ($cover) {
         $url = $cover['media_url'];
     } else {
-        // Video only: use a still frame from the first video (Cloudinary can do this)
+        // Video only: a still from the video. Same rule as src/utils/videoThumbnail.ts:
+        // "so_auto" lets Cloudinary pick a good frame; the address is the same every
+        // time, so Cloudinary makes the picture once and reuses it.
         $video = null;
         foreach ($media as $m) {
-            if (!empty($m['media_url'])) { $video = $m; break; }
+            if (!empty($m['media_url']) && !empty($m['is_cover'])) { $video = $m; break; }
         }
-        if (!$video || strpos($video['media_url'], 'res.cloudinary.com') === false) return null;
-        $url = preg_replace('/\.[a-z0-9]+(\?.*)?$/i', '.jpg', $video['media_url']);
+        if (!$video) {
+            foreach ($media as $m) {
+                if (!empty($m['media_url'])) { $video = $m; break; }
+            }
+        }
+        if (!$video || strpos($video['media_url'], 'res.cloudinary.com') === false
+            || strpos($video['media_url'], '/video/upload/') === false) {
+            return null;
+        }
+        $settings = 'so_auto,c_fill,w_1200,h_630,q_auto:good,f_jpg';
+        $url = $video['media_url'];
+        if (preg_match('#/video/upload/(?:[^/]+/)*?(v\d+/)#', $url)) {
+            $url = preg_replace('#/video/upload/(?:[^/]+/)*?(v\d+/)#', '/video/upload/' . $settings . '/$1', $url, 1);
+        } else {
+            $url = preg_replace('#/video/upload/(?:(?:q|f|vc)_[^/]*/)?#', '/video/upload/' . $settings . '/', $url, 1);
+        }
+        $url = preg_replace('/\.[a-z0-9]+(\?.*)?$/i', '.jpg', $url);
+        return preg_replace('#^http://#i', 'https://', $url);
     }
 
     // Ask Cloudinary for a small 1200x630 JPG: WhatsApp skips big images.
     if (strpos($url, 'res.cloudinary.com') !== false && strpos($url, '/upload/') !== false) {
-        $url = preg_replace('#/upload/#', '/upload/c_fill,w_1200,h_630,q_auto:good,f_jpg/', $url, 1);
+        // Replace the stored "q_auto,f_auto" (which can give WebP) with a fixed JPG.
+        $url = preg_replace(
+            '#/upload/(?:(?:q_[a-z0-9:]+|f_[a-z0-9]+)(?:,(?:q_[a-z0-9:]+|f_[a-z0-9]+))*/)?#i',
+            '/upload/c_fill,w_1200,h_630,q_auto:good,f_jpg/',
+            $url,
+            1
+        );
     }
     return preg_replace('#^http://#i', 'https://', $url);
 }

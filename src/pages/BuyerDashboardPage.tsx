@@ -14,6 +14,7 @@ import { useBuyerFooterExtra } from "../components/Layout/ShellContext";
 import BuyerHero from "../components/BuyerDashboard/BuyerHero";
 import BuyerQuickActions from "../components/BuyerDashboard/BuyerQuickActions";
 import BuyerMatchCard from "../components/BuyerDashboard/BuyerMatchCard";
+import { videoOnlyCover } from "../utils/videoThumbnail";
 
 function SoonCard({ title, description }: { title: string; description: string }) {
   return (
@@ -112,7 +113,7 @@ export default function BuyerDashboardPage() {
                 title={property.title}
                 price={property.price}
                 location={property.location}
-                primary_media={property.media_urls?.[0] ?? null}
+                primary_media={videoOnlyCover(property.property_media) ?? property.media_urls?.[0] ?? null}
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
                 sqm={property.sqm}

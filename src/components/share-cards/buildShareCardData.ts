@@ -1,5 +1,6 @@
 import { buildShareSlug } from "../../utils/slug";
 import type { ResidentialShareCardData } from "./ResidentialShareCard";
+import { videoOnlyCover } from "../../utils/videoThumbnail";
 
 // Turns a property row from Supabase (the same object the property details page uses,
 // with its property_media and profiles) into the plain data the share card draws.
@@ -65,7 +66,9 @@ export function buildResidentialCardData(
     listingType: property?.listing_type ?? "",
     price: positiveNumber(property?.price),
     location: property?.location ?? "",
-    imageUrl: cloudinary(cover?.media_url, "w_1080,h_1350,c_limit"),
+    imageUrl:
+      videoOnlyCover(media, "w_1080,h_1350,c_limit") ??
+      cloudinary(cover?.media_url, "w_1080,h_1350,c_limit"),
     photoCount: photos.length,
     bedrooms: positiveNumber(property?.bedrooms),
     bathrooms: positiveNumber(property?.bathrooms),

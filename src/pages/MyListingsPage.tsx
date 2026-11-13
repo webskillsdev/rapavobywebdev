@@ -9,6 +9,7 @@ import PageHeader from "../components/Layout/PageHeader";
 import { useBrandedDialog } from "../components/BrandedDialog";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 import SharePropertySheet from "../components/share-sheet/SharePropertySheet";
+import { videoOnlyCover } from "../utils/videoThumbnail";
 import { pricePeriod } from "../utils/propertyFacts";
 
 export default function MyListingsPage() {
@@ -166,7 +167,11 @@ export default function MyListingsPage() {
           {filtered.map((property) => (
             <div key={property.id} className="bg-white rounded-xl shadow-sm p-4 flex gap-4">
               <img
-                src={property.cover_url ?? "/placeholder-property.jpg"}
+                src={
+                  videoOnlyCover(property.property_media, "w_300,h_225,c_fill") ??
+                  property.cover_url ??
+                  "/placeholder-property.jpg"
+                }
                 alt={property.title}
                 className="h-20 w-24 sm:h-24 sm:w-32 rounded-lg object-cover flex-shrink-0"
               />

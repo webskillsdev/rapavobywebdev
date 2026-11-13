@@ -4,12 +4,15 @@ import { buildShareSlug } from "../../utils/slug";
 import type { ResidentialShareCardData } from "../share-cards/ResidentialShareCard";
 import { buildShareCardData } from "../share-cards/buildShareCardData";
 import { downloadBlob } from "../share-cards/shareCard";
+import { videoOnlyCover } from "../../utils/videoThumbnail";
 import ShareToStatusModal from "../share-cards/ShareToStatusModal";
+import { pricePeriod, propertyFacts } from "../../utils/propertyFacts";
 
 // The "Share Property" sheet. Every Share button in the app opens this instead of
 // copying a link straight away. The person then chooses how to share:
 //
-//   Share             the phone's share menu, with the property details and link
+//   Share             the phone's share menu: the cover photo, with the property
+//                     details and link as its caption (like the Rapavo mobile app)
 //   Share to Status   the branded card for WhatsApp Status (opens the card window)
 //   Share Public Link the public gallery link (anyone can view and save the photos)
 //   Copy Link         copies the public gallery link
@@ -39,6 +42,9 @@ const iconProps = {
 // ----- small helpers -------------------------------------------------------
 
 function coverOf(property: any): string | null {
+  // Video-only listing: a still from the video. Listings with photos are unchanged.
+  const videoCover = videoOnlyCover(property?.property_media, "c_limit,w_1600");
+  if (videoCover) return videoCover;
   if (property?.cover_url) return property.cover_url;
   if (property?.primary_media) return property.primary_media;
   const media: any[] = Array.isArray(property?.property_media) ? property.property_media : [];
@@ -54,6 +60,62 @@ function priceOf(property: any): string {
   if (!Number.isFinite(n) || n <= 0) return "";
   const suffix = property?.listing_type === "rent" ? " / year" : property?.listing_type === "shortlet" ? " / night" : "";
   return `₦${n.toLocaleString("en-NG")}${suffix}`;
+}
+
+// Cloudinary photos are stored with "f_auto", which can arrive as WebP. Ask for a
+// JPG of a sensible size instead, which WhatsApp and phone galleries all accept.
+function shareablePhotoUrl(url: string): string {
+  if (url.includes("/video/upload/")) return url; // video still: already a JPG
+  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/")) return url;
+  return url.replace(
+    /\/upload\/(?:(?:q_[a-z0-9:]+|f_[a-z0-9]+)(?:,(?:q_[a-z0-9:]+|f_[a-z0-9]+))*\/)?/i,
+    "/upload/c_limit,w_1600,q_auto:good,f_jpg/",
+  );
+}
+
+// "c_of_o" -> "C of O", ["deed_of_assignment", "survey"] -> "Deed of assignment, Survey"
+function documentLabel(value: unknown): string {
+  const list: unknown[] = Array.isArray(value) ? value : value ? [value] : [];
+  return list
+    .map((v) =>
+      String(v)
+        .split(/[_\s]+/)
+        .filter(Boolean)
+        .map((w) => (w.length === 1 ? w.toUpperCase() : w.toLowerCase()))
+        .join(" "),
+    )
+    .filter(Boolean)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(", ");
+}
+
+const LISTING_LABEL: Record<string, string> = { sale: "FOR SALE", rent: "FOR RENT", shortlet: "SHORTLET" };
+
+// The text that goes under the photo in WhatsApp. Only details the listing actually has.
+function buildCaption(p: any, url: string): string {
+  const lines: string[] = [];
+  const label = LISTING_LABEL[String(p?.listing_type ?? "")];
+  if (label) lines.push(label);
+  if (p?.title) lines.push(String(p.title));
+
+  let description = String(p?.description ?? "").trim();
+  if (description.length > 600) description = `${description.slice(0, 597).trimEnd()}...`;
+  if (description) lines.push("", description);
+
+  const facts: string[] = [];
+  if (p?.location) facts.push(`Location: ${p.location}`);
+  const n = Number(p?.price);
+  if (Number.isFinite(n) && n > 0) {
+    facts.push(`Price: ₦${n.toLocaleString("en-NG")}${pricePeriod(p) ?? ""}${p?.negotiable === true ? " (negotiable)" : ""}`);
+  }
+  const rooms = propertyFacts(p ?? {});
+  if (rooms) facts.push(`Details: ${rooms}`);
+  const docs = documentLabel(p?.document_status);
+  if (docs) facts.push(`Title: ${docs}`);
+  if (facts.length) lines.push("", ...facts);
+
+  lines.push("", "More photos and agent contact:", url);
+  return lines.join("\n");
 }
 
 // Photos from Cloudinary can arrive as WebP/AVIF, which phone galleries often refuse.
@@ -153,6 +215,9 @@ export default function SharePropertySheet({ property, onClose }: Props) {
   const [cardData, setCardData] = useState<ResidentialShareCardData | null>(null);
   const [busy, setBusy] = useState<Busy>(null);
   const [message, setMessage] = useState("");
+  // Got ready as soon as the sheet opens, so tapping Share opens the share menu at once
+  // (phones only allow the share menu straight after a tap, not after a long download).
+  const [prepared, setPrepared] = useState<{ caption: string; file: File | null; done: boolean } | null>(null);
 
   const id: string = property?.id ?? "";
   const title: string = property?.title ?? "Property";
@@ -163,6 +228,44 @@ export default function SharePropertySheet({ property, onClose }: Props) {
   const slug = buildShareSlug(title, id);
   const detailsUrl = `${window.location.origin}/property/${slug}`;
   const publicUrl = `${window.location.origin}/share/${slug}`;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function prepare() {
+      let full: any = property;
+      try {
+        const result: any = await loadProperty(id, true).unwrap();
+        if (result?.data) full = result.data;
+      } catch {
+        // Use the details the page already gave us.
+      }
+      const caption = buildCaption(full, detailsUrl);
+      if (cancelled) return;
+      setPrepared({ caption, file: null, done: false });
+
+      let file: File | null = null;
+      const photo = coverOf(full) ?? image;
+      if (photo) {
+        try {
+          const response = await fetch(shareablePhotoUrl(photo));
+          if (response.ok) {
+            const blob = await toGalleryFriendly(await response.blob());
+            const ext = blob.type === "image/png" ? "png" : "jpg";
+            file = new File([blob], `rapavo-${slug.slice(0, 40)}.${ext}`, { type: blob.type });
+          }
+        } catch {
+          // No photo: Share still sends the details and link.
+        }
+      }
+      if (!cancelled) setPrepared({ caption, file, done: true });
+    }
+
+    if (id) void prepare();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const close = useCallback(() => {
     if (!busy) onClose();
@@ -199,9 +302,46 @@ export default function SharePropertySheet({ property, onClose }: Props) {
     setMessage((await copy(url)) ? "Link copied." : `Copy this link: ${url}`);
   }
 
-  function handleShare() {
-    const details = [location, price].filter(Boolean).join(" · ");
-    void shareLink(detailsUrl, [title, details].filter(Boolean).join("\n"));
+  // Share: the cover photo with the details as its caption. Where a device can't share
+  // photos (most computers), the details and link are shared or copied instead, and the
+  // link preview in WhatsApp shows the property photo.
+  async function handleShare() {
+    setMessage("");
+    const caption = prepared?.caption ?? buildCaption(property, detailsUrl);
+    const file = prepared?.file ?? null;
+    const canShare = typeof navigator.share === "function";
+
+    if (
+      file &&
+      canShare &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare({ files: [file], text: caption })
+    ) {
+      // Some apps (WhatsApp on iPhone) keep only the photo, so the caption is copied too.
+      void copy(caption);
+      try {
+        await navigator.share({ files: [file], text: caption });
+        setMessage("Shared. The details are also copied, in case the app left them out.");
+        return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+      }
+    }
+
+    if (canShare) {
+      try {
+        await navigator.share({ title, text: caption });
+        return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+      }
+    }
+
+    setMessage(
+      (await copy(caption))
+        ? "Property details and link copied. Paste them into WhatsApp."
+        : `Copy this link: ${detailsUrl}`,
+    );
   }
 
   function handleShareGallery() {
@@ -326,8 +466,14 @@ export default function SharePropertySheet({ property, onClose }: Props) {
           <MainRow
             highlighted
             title="Share"
-            text="Share the property link and details with anyone."
-            onClick={handleShare}
+            text={
+              prepared?.done === false || !prepared
+                ? "Preparing the photo..."
+                : prepared.file
+                  ? "Share the photo with the property details and link."
+                  : "Share the property details and link."
+            }
+            onClick={() => void handleShare()}
             icon={
               <svg {...iconProps}>
                 <circle cx="18" cy="5" r="3" />

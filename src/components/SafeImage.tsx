@@ -1,4 +1,5 @@
 import { useEffect, useState, type ImgHTMLAttributes } from "react";
+import { backupVideoThumbnail } from "../utils/videoThumbnail";
 
 type SafeImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {
   src?: string | null;
@@ -39,7 +40,11 @@ export default function SafeImage({ src, alt = "", className = "", style, ...res
   }
 
   // Second try: same picture with a small extra marker, so the browser fetches it again.
-  const url = attempt === 0 ? src : `${src}${src.includes("?") ? "&" : "?"}retry=1`;
+  // (For a video-only listing's thumbnail, the second try uses the frame 1 second in.)
+  const url =
+    attempt === 0
+      ? src
+      : backupVideoThumbnail(src) ?? `${src}${src.includes("?") ? "&" : "?"}retry=1`;
 
   return (
     <img

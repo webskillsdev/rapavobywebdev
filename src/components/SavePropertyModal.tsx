@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { videoOnlyCover } from "../utils/videoThumbnail";
 
 export type SaveStep = "confirm" | "saving" | "done";
 
@@ -12,6 +13,8 @@ type Props = {
 
 function imageOf(property: any): string | null {
   const media: any[] = Array.isArray(property.property_media) ? property.property_media : [];
+  const videoCover = videoOnlyCover(media, "w_200,h_150,c_fill");
+  if (videoCover) return videoCover;
   const image =
     media.find((m) => m.is_cover && m.media_type !== "video") ??
     media.find((m) => m.media_type !== "video");
