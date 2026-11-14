@@ -11,6 +11,8 @@ import exploreHero from "../assets/explore-hero.jpg";
 import { buildShareSlug } from "../utils/slug";
 import { propertyFacts, pricePeriod } from "../utils/propertyFacts";
 import SafeImage from "../components/SafeImage";
+import BrowseByTypeSection from "../components/Explore/BrowseByTypeSection";
+import AgentContactStrip from "../components/AgentContactStrip";
 import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../components/Explore/ExploreStates";
 
 function ArrowBadge() {
@@ -21,10 +23,6 @@ function ArrowBadge() {
       </svg>
     </span>
   );
-}
-
-function titleCase(text: string): string {
-  return text.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 const RECOMMENDED_TABS = [
@@ -73,14 +71,7 @@ function FeaturedCard({ property }: { property: any }) {
         {property.property_type !== "land" && propertyFacts(property) && (
           <p className="text-xs text-gray-600 mt-2">{propertyFacts(property)}</p>
         )}
-        {(property.user_name || property.agent_phone) && (
-          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
-            <span className="h-6 w-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-[10px] font-semibold">
-              {(property.user_name ?? "?").charAt(0).toUpperCase()}
-            </span>
-            <span className="text-xs text-gray-600">{property.user_name ?? "Agent"}</span>
-          </div>
-        )}
+        <AgentContactStrip property={property} />
         <Link
           to={`/property/${buildShareSlug(property.title, property.id)}`}
           className="mt-2 block text-center text-sm font-medium text-green-700 border border-green-200 rounded-md py-1.5 hover:bg-green-50"
@@ -406,50 +397,17 @@ export default function ListingPage() {
           </div>
         </section>
 
-        {/* 3. Property types — a compact row instead of large picture tiles */}
-        {categoryGroups.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Browse by Property Type</h2>
-            <div className="flex flex-wrap gap-2">
-              {categoryGroups.map((group) => (
-                <button
-                  key={group.type}
-                  type="button"
-                  onClick={() => {
-                    setPropertyType(propertyType === group.type ? "" : group.type);
-                    setPage(1);
-                    setScrollPending(true);
-                  }}
-                  aria-pressed={propertyType === group.type}
-                  className={
-                    propertyType === group.type
-                      ? "rounded-full bg-green-600 text-white px-4 py-2 text-sm font-semibold"
-                      : "rounded-full bg-white border border-gray-200 text-gray-700 px-4 py-2 text-sm font-medium hover:border-green-400"
-                  }
-                >
-                  {titleCase(group.type)}
-                  <span className={propertyType === group.type ? "ml-1.5 text-white/80" : "ml-1.5 text-gray-400"}>
-                    {group.count.toLocaleString()}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section className="mb-10 bg-green-50 border border-green-100 rounded-xl p-6 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="font-semibold text-gray-900">Looking for something specific?</p>
-            <p className="text-sm text-gray-600 mt-1">Use our advanced filters to find properties that match your needs.</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="rounded-md bg-green-600 text-white font-semibold px-5 py-2.5 text-sm hover:bg-green-700 flex-shrink-0"
-          >
-            Search & Filter →
-          </button>
-        </section>
+        {/* 3. Property types and the "Looking for something specific?" banner */}
+        <BrowseByTypeSection
+          groups={categoryGroups}
+          selected={propertyType}
+          onSelect={(type) => {
+            setPropertyType(propertyType === type ? "" : type);
+            setPage(1);
+            setScrollPending(true);
+          }}
+          onSearchFilter={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        />
 
         <div id="results-top" className="scroll-mt-4" />
         <div className="flex flex-wrap items-center gap-3">

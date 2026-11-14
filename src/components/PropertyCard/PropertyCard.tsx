@@ -4,6 +4,7 @@ import SafeImage from "../SafeImage";
 import { propertyFacts, pricePeriod } from "../../utils/propertyFacts";
 import { useSaveProperty } from "../../hooks/useSaveProperty";
 import SharePropertySheet from "../share-sheet/SharePropertySheet";
+import AgentContactStrip from "../AgentContactStrip";
 
 interface PropertyCardProps {
   id: string;
@@ -123,6 +124,8 @@ export default function PropertyCard({
               {propertyFacts({ bedrooms, bathrooms, sqm })}
             </p>
           )}
+
+          {property && <AgentContactStrip property={property} />}
         </div>
       </div>
     </>

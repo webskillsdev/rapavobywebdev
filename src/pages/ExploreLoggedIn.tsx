@@ -13,6 +13,7 @@ import { ExploreSkeletonGrid, ExploreErrorState, ExploreEmptyState } from "../co
 import Sidebar from "../components/Layout/Sidebar";
 import AgentSidebar from "../components/Layout/AgentSidebar";
 import promoImage from "../assets/list-property-promo.jpg";
+import AgentContactStrip from "../components/AgentContactStrip";
 
 const TABS = [
   { label: "Buy", filterKey: "listingType" as const, value: "sale" },
@@ -72,28 +73,13 @@ function ExploreCard({ property }: { property: any }) {
             ₦{Number(property.price ?? 0).toLocaleString()}
         {pricePeriod(property) && <span className="text-xs text-gray-400 font-normal"> {pricePeriod(property)}</span>}
           </p>
-          {property.agent_verified && (
-            <span className="flex items-center gap-1 text-[10px] font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded-full">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-              Verified Agent
-            </span>
-          )}
         </div>
         <p className="font-semibold text-gray-900 text-sm mt-1 truncate">{property.title}</p>
         <p className="text-xs text-gray-500">{property.location}</p>
         {property.property_type !== "land" && propertyFacts(property) && (
           <p className="text-xs text-gray-600 mt-2">{propertyFacts(property)}</p>
         )}
-        {property.user_name && (
-          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
-            <span className="h-6 w-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-[10px] font-semibold">
-              {property.user_name.charAt(0).toUpperCase()}
-            </span>
-            <span className="text-xs text-gray-600">{property.user_name}</span>
-          </div>
-        )}
+        <AgentContactStrip property={property} />
         <Link
           to={`/property/${buildShareSlug(property.title, property.id)}`}
           className="mt-2 block text-center text-sm font-medium text-green-700 border border-green-200 rounded-md py-1.5 hover:bg-green-50"

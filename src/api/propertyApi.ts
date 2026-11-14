@@ -123,8 +123,28 @@ export const propertyApi = api.injectEndpoints({
 
           const { data, error } = await query;
 
+          // Agent contact details for the Call / WhatsApp buttons on feed cards.
+          const agentIds = Array.from(
+            new Set(
+              (data ?? [])
+                .filter((i: any) => i.item_type === "property" && i.profile_id)
+                .map((i: any) => i.profile_id),
+            ),
+          );
+          const agentContacts = new Map<string, any>();
+          if (agentIds.length > 0) {
+            const { data: agents } = await supabase
+              .from("profiles")
+              .select("id, phone_number, whatsapp_number, is_verified")
+              .in("id", agentIds);
+            (agents ?? []).forEach((a: any) => agentContacts.set(a.id, a));
+          }
+
           const enrichedData = data?.map((item) => ({
             ...item,
+            agent_phone: agentContacts.get(item.profile_id)?.phone_number ?? null,
+            whatsapp_number: agentContacts.get(item.profile_id)?.whatsapp_number ?? null,
+            agent_verified: agentContacts.get(item.profile_id)?.is_verified ?? false,
             // Video-only listing: use a still from the video. Listings with photos are unchanged.
             primary_media:
               (item.item_type === "property" &&
@@ -1117,7 +1137,10 @@ toggleSavedProperty: builder.mutation({
                 profiles (
                   full_name,
                   avatar_url,
-                  email
+                  email,
+                  is_verified,
+                  phone_number,
+                  whatsapp_number
                 ),
                 property_media (*)
               )
@@ -1161,6 +1184,9 @@ toggleSavedProperty: builder.mutation({
             agent_name: item.properties.profiles?.full_name,
             agent_photo: item.properties.profiles?.avatar_url,
             agent_email: item.properties.profiles?.email,
+            agent_verified: item.properties.profiles?.is_verified ?? false,
+            agent_phone: item.properties.profiles?.phone_number ?? null,
+            whatsapp_number: item.properties.profiles?.whatsapp_number ?? null,
             media_urls:
               item.properties.property_media
                 ?.sort(

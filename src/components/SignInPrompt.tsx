@@ -1,9 +1,10 @@
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { withNext } from "../utils/redirect";
 
 type Props = {
   title: string;
-  message: string;
+  message: ReactNode;
   next: string; // the page to come back to after logging in or signing up
   onClose: () => void;
 };

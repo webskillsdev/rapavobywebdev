@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
+import AgentContactStrip from "../components/AgentContactStrip";
 import SignInPrompt from "../components/SignInPrompt";
 import { useGetSinglePropertyQuery, useGetFeedsQuery } from "../api/propertyApi";
 import { useSaveProperty } from "../hooks/useSaveProperty";
@@ -340,21 +341,22 @@ function SimilarProperties({ propertyType, currentId }: { propertyType: string; 
       <h2 className="font-semibold text-gray-900 mb-3">Similar Properties</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {items.map((item: any) => (
-          <Link
-            key={item.id}
-            to={`/property/${buildShareSlug(item.title, item.id)}`}
-            className="rounded-lg overflow-hidden border border-gray-200 hover:shadow-sm"
-          >
-            <div className="aspect-[4/3] bg-gray-100">
-              {item.primary_media && (
-                <img src={item.primary_media} className="h-full w-full object-cover" />
-              )}
+          <div key={item.id} className="rounded-lg overflow-hidden border border-gray-200 hover:shadow-sm">
+            <Link to={`/property/${buildShareSlug(item.title, item.id)}`} className="block">
+              <div className="aspect-[4/3] bg-gray-100">
+                {item.primary_media && (
+                  <img src={item.primary_media} className="h-full w-full object-cover" />
+                )}
+              </div>
+              <div className="px-2 pt-2">
+                <p className="text-xs font-medium text-gray-900 truncate">{item.title}</p>
+                <p className="text-xs text-green-600 font-semibold">₦{Number(item.price ?? 0).toLocaleString()}</p>
+              </div>
+            </Link>
+            <div className="px-2 pb-2">
+              <AgentContactStrip property={item} />
             </div>
-            <div className="p-2">
-              <p className="text-xs font-medium text-gray-900 truncate">{item.title}</p>
-              <p className="text-xs text-green-600 font-semibold">₦{Number(item.price ?? 0).toLocaleString()}</p>
-            </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

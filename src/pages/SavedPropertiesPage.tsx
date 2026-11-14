@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
+import AgentContactStrip from "../components/AgentContactStrip";
 import { useGetSavedPropertiesQuery } from "../api/propertyApi";
 import { useSaveProperty } from "../hooks/useSaveProperty";
 import DashboardShell from "../components/Layout/DashboardShell";
@@ -297,6 +298,10 @@ function SavedCard({
             ))}
           </div>
         )}
+
+        <div className="mt-auto pt-1">
+          <AgentContactStrip property={property} />
+        </div>
       </div>
       {shareOpen && <SharePropertySheet property={property} onClose={() => setShareOpen(false)} />}
     </article>
@@ -462,7 +467,7 @@ export default function SavedPropertiesPage() {
   }
 
   const gridClass =
-    view === "grid" ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5" : "space-y-4";
+    view === "grid" ? "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5" : "space-y-4";
 
   return (
     <DashboardShell sidebar={isAgent ? <AgentSidebar /> : <Sidebar />}>
@@ -560,9 +565,9 @@ export default function SavedPropertiesPage() {
           </div>
         </div>
 
-        <div className="mt-5 lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-6 items-start">
+        <div className="mt-5 xl:grid xl:grid-cols-[200px_minmax(0,1fr)] xl:gap-6 items-start">
           {/* Side column — desktop only */}
-          <aside className="hidden lg:block space-y-4">
+          <aside className="hidden xl:block space-y-4">
             <div className="rounded-2xl border border-gray-200 bg-white p-4">
               <p className="font-semibold text-gray-900">Folders</p>
               <div className="mt-3 flex items-center gap-3 rounded-lg bg-green-50 px-3 py-2.5 text-sm font-semibold text-green-800">
@@ -650,7 +655,7 @@ export default function SavedPropertiesPage() {
           {/* Results */}
           <section className="min-w-0">
             {isLoading && (
-              <ExploreSkeletonGrid count={6} columns="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" />
+              <ExploreSkeletonGrid count={6} columns="grid-cols-1 sm:grid-cols-2" />
             )}
 
             {!isLoading && !!error && (

@@ -9,6 +9,7 @@ import SafeImage from "../components/SafeImage";
 import { propertyFacts, pricePeriod } from "../utils/propertyFacts";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
+import AgentContactStrip from "../components/AgentContactStrip";
 import DashboardShell from "../components/Layout/DashboardShell";
 import feedHero from "../assets/feed-hero.jpg";
 import Sidebar from "../components/Layout/Sidebar";
@@ -139,6 +140,12 @@ export default function FeedPage() {
               )}
                   {item.description && (
                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">{item.description}</p>
+                  )}
+
+                  {item.item_type !== "request" && (
+                    <div className="mt-3">
+                      <AgentContactStrip property={item} layout="inline" />
+                    </div>
                   )}
 
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 pt-3 border-t border-gray-100 text-sm">
