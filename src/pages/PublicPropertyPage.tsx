@@ -2,7 +2,7 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetPublicPropertyQuery } from "../api/propertyApi";
-import { extractIdFromSlug } from "../utils/slug";
+import { extractIdFromSlug, buildShareSlug } from "../utils/slug";
 import { useBrandedDialog } from "../components/BrandedDialog";
 
 export default function PublicPropertyPage() {
@@ -18,6 +18,7 @@ export default function PublicPropertyPage() {
     metaProperty
       ? `${metaProperty.title} in ${metaProperty.location} — ₦${Number(metaProperty.price ?? 0).toLocaleString()} on RAPAVO.`
       : null,
+    metaProperty ? `/property/${buildShareSlug(metaProperty.title, metaProperty.id)}` : null,
   );
 
   if (isLoading) return <p className="max-w-3xl mx-auto px-6 py-10 text-gray-500">Loading property...</p>;

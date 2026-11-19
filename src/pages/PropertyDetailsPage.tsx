@@ -52,6 +52,7 @@ export default function PropertyDetailsPage() {
     metaProperty
       ? `${metaProperty.title} in ${metaProperty.location} — ₦${Number(metaProperty.price ?? 0).toLocaleString()} on RAPAVO.`
       : null,
+    metaProperty ? `/property/${buildShareSlug(metaProperty.title, metaProperty.id)}` : null,
   );
 
   if (isLoading) {

@@ -46,7 +46,7 @@ function rapavo_load_property()
 
     $url = rtrim($config['supabase_url'], '/') . '/rest/v1/properties'
         . '?id=eq.' . $id
-        . '&select=title,price,location,listing_type,property_type,bedrooms,bathrooms,'
+        . '&select=id,title,price,location,listing_type,property_type,bedrooms,bathrooms,'
         . 'property_media(media_url,media_type,is_cover)'
         . '&limit=1';
 
@@ -155,13 +155,14 @@ function rapavo_inject_meta($html, array $p)
     $description = ($bits ? implode(' · ', $bits) . '. ' : '') . 'View photos and contact the agent on RAPAVO.';
 
     $pageTitle = $title . ($price ? ' — ' . $price : '') . ' | RAPAVO';
-    $scheme = 'https://';
-    $host = $_SERVER['HTTP_HOST'] ?? 'rapavo.com';
-    $pageUrl = $scheme . $host . (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+    // The one official address for this property (same as the sitemap). /share/... and
+    // /property/... both point Google here, so they are not seen as duplicate pages.
+    $pageUrl = rapavo_canonical_url($p);
     $image = rapavo_pick_image($p['property_media'] ?? []);
 
     // Remove the general tags from index.html, then add the property ones.
     $html = preg_replace('#<title>.*?</title>#is', '', $html);
+    $html = preg_replace('#<link\s+rel="canonical"[^>]*>\s*#i', '', $html);
     $html = preg_replace('#<meta\s+(name|property)="(description|og:[a-z:_]+|twitter:[a-z:_]+)"[^>]*>\s*#i', '', $html);
 
     $tags = [
@@ -171,6 +172,7 @@ function rapavo_inject_meta($html, array $p)
         '<meta property="og:type" content="website" />',
         '<meta property="og:title" content="' . $e($title . ($price ? ' — ' . $price : '')) . '" />',
         '<meta property="og:description" content="' . $e($description) . '" />',
+        '<link rel="canonical" href="' . $e($pageUrl) . '" />',
         '<meta property="og:url" content="' . $e($pageUrl) . '" />',
     ];
     if ($image) {
@@ -185,4 +187,19 @@ function rapavo_inject_meta($html, array $p)
     }
 
     return preg_replace('#</head>#i', '    ' . implode("\n    ", $tags) . "\n  </head>", $html, 1);
+}
+
+// Same rule as src/utils/slug.ts (buildShareSlug): "3 Bed Duplex!" + id -> "3-bed-duplex-<id>"
+function rapavo_slugify($text)
+{
+    $text = strtolower(trim((string) $text));
+    $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+    return trim($text, '-');
+}
+
+function rapavo_canonical_url(array $p)
+{
+    $id = strtolower((string) ($p['id'] ?? ''));
+    $slug = rapavo_slugify($p['title'] ?? '');
+    return 'https://rapavo.com/property/' . ($slug !== '' ? $slug . '-' : '') . $id;
 }

@@ -8,6 +8,9 @@
   RewriteRule ^Contact_us\.html$ /contact/ [R=301,L]
   RewriteRule ^privacy\.html$ /privacy/ [R=301,L]
 
+  # Sitemap -> sitemap.php, which lists every published property from the database
+  RewriteRule ^sitemap\.xml$ /sitemap.php [L]
+
   # Property links -> share.php, which adds the property photo, title and
   # price so WhatsApp/Facebook previews show the property, not the logo
   RewriteRule ^(share|property)/[^/]+/?$ /share.php [L]
